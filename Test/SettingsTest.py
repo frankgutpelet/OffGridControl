@@ -40,6 +40,10 @@ class SettimgsTest(unittest.TestCase):
         settings = Settings("Settings.xml")
         self.assertEqual("On", settings.getApproval("approval2").status)
 
+    def test_GivenApproval2_WhenInitialize_ThenTimerOn7h(self):
+        settings = Settings("Settings.xml")
+        self.assertEqual(7 , settings.getApproval('approval2').timers[0].onTime.hour)
+
 
 
 

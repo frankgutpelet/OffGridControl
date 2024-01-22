@@ -20,18 +20,21 @@ class Settings:
                 if name.upper() == value.upper():
                     return value
 
+    class Timer():
+        onTime : time
+        offTime : time
+        def __init__(self, onTime : str, offTime : str):
+            self.onTime = time(int(onTime.split(':')[0]), int(onTime.split(':')[1]))
+            self.offTime = time(int(offTime.split(':')[0]), int(offTime.split(':')[1]))
+
     class Approval(Element):
-        class timer:
-            on : time
-            off : time
-            isOn : bool
 
         name : str
         dns : str
         prio : int
         supply : str
         status : str
-        timers : list()
+        timers : list
 
         def __init__(self, config : ET.Element):
             self.name = config.attrib['name']
@@ -39,6 +42,9 @@ class Settings:
             self.prio = int(config.attrib['prio'])
             self.supply = self._getByStr(config.attrib['supply'], Settings.E_SUPPLY.names)
             self.status = self._getByStr(config.attrib['status'], Settings.E_STATE.names)
+            self.timers = list()
+            for timerConfig in config.findall('Timer'):
+                self.timers.append(Settings.Timer(timerConfig.attrib['on'], timerConfig.attrib['off']))
 
         def Supply(self):
             return self.ENUM_SUPPLY[self.supply]
