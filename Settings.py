@@ -1,20 +1,26 @@
 import xml.etree.ElementTree as ET
 from datetime import time
-from enum import Enum
 
 class Settings:
-    class Approval:
-        class Supply(Enum):
-            SURPLUS = 1
-            SOLAR = 2
-            BATTERY = 3
-            UTILITY = 4
+    class E_SUPPLY:
+        SURPLUS = 'Surplus'
+        SOLAR = 'Solar'
+        BATTERY = 'Battery'
+        UTILITY = 'Utility'
+        names = [SURPLUS, SOLAR, BATTERY, UTILITY]
 
-        class status(Enum):
-            OFF = 1
-            AUTO = 2
-            ON = 3
+    class E_STATE:
+        ON = 'On'
+        OFF = 'Off'
+        AUTO = 'Auto'
+        names = [ON, OFF, AUTO]
+    class Element:
+        def _getByStr(self, name : str, enum : list):
+            for value in enum:
+                if name.upper() == value.upper():
+                    return value
 
+    class Approval(Element):
         class timer:
             on : time
             off : time
@@ -23,49 +29,56 @@ class Settings:
         name : str
         dns : str
         prio : int
-        supply = Enum("supply", ["SURPLUS", "SOLAR", "BATTERY", "UTILITY"])
-        status = Enum("status", ["OFF", "AUTO", "ON"])
+        supply : str
+        status : str
         timers : list()
 
-    class Logging:
+        def __init__(self, config : ET.Element):
+            self.name = config.attrib['name']
+            self.dns = config.attrib['dns']
+            self.prio = int(config.attrib['prio'])
+            self.supply = self._getByStr(config.attrib['supply'], Settings.E_SUPPLY.names)
+            self.status = self._getByStr(config.attrib['status'], Settings.E_STATE.names)
 
-        validLoglevels = ["DEBUG", "ERROR", "INFO"]
-        loglevel : str
-        logFile : str
+        def Supply(self):
+            return self.ENUM_SUPPLY[self.supply]
+
+
+    class Logging(Element):
+
+        __validLoglevels = ["DEBUG", "ERROR", "INFO"]
+        loglevel : int
+        __logFile : str
 
         def __init__(self, loglevel : str, logfile : str):
 
-            self.loglevel = ""
-            for validLoglevel in self.validLoglevels:
-                if validLoglevel == loglevel:
-                    self.loglevel = loglevel
-
-            if "" == self.loglevel:
-                raise Exception(loglevel + " is no valid loglevel")
-
-            self.loglevel = loglevel
-            self.logFile = logfile
-
-
-
-
-            self.logFile = logfile = logfile
-
-        def getLoglevel(self):
-            return self.__logLevelText[self.__loglevel]
+            self.loglevel = self._getByStr(loglevel, self.__validLoglevels)
+            self.__logFile = logfile
+            self.__logFile = logfile = logfile
 
     logging : Logging
+    approvals : list[Approval]
 
 
     def __init__(self, logfile : str):
+        self.approvals = list()
+
         tree = ET.parse(logfile)
         root = tree.getroot()
 
         tagLogging = root.find("Logging")
         self.logging = self.Logging(tagLogging.attrib['loglevel'], tagLogging.attrib['file'])
 
-        self.logging = self.logging
 
+        for app in root.find('Approvals').findall('App'):
+            self.approvals.append(self.Approval(app))
+
+    def getApproval(self, name : str):
+        for app in self.approvals:
+            if app.name == name:
+                return app
+
+        return None
 
 
 
