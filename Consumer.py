@@ -15,6 +15,8 @@ class TimeSwitch():
         for time in self.times:
             onTime = time.onTime.hour * 60 + time.onTime.minute
             offTime =  time.offTime.hour * 60 + time.offTime.minute
+            if 0 == offTime:
+                offTime = 24 * 60
             timestamp = now.hour * 60 + now.minute
 
             if timestamp > onTime and timestamp < offTime:
@@ -31,28 +33,38 @@ class Consumer(IConsumer):
     isOn : bool
     logger : Logging
 
-    def __init__(self, settings : Element, logger : Logging, timer : list = None):
-        self.name = settings.attrib['name']
-        self.__dns = settings.attrib['dns']
-        self.supply = settings.attrib['supply']
-        self.mode = settings.attrib['mode']
-        self.prio = settings.attrib['prio']
+    def __init__(self, settings : Settings.Approval, logger : Logging):
+        self.name = settings.name
+        self.__dns = settings.dns
+        self.supply = settings.supply
+        self.mode = settings.mode
+        self.prio = settings.prio
         self.logger = logger
-        if timer:
-            self.timeswitch = TimeSwitch(timer)
+        if  0 < len(settings.timers):
+            self.timeswitch = TimeSwitch(settings.timers)
         else:
             self.timeswitch = None
+
         self.isOn = False
+        if 'On' == self.mode:
+            self.isOn = True
+
 
     def approve(self):
+        if not 'Auto' == self.mode:
+            return self.isOn
         if self.timeswitch:
             self.isOn = self.timeswitch.isOn(datetime.now().time())
         else:
             self.isOn = True
 
+        return self.isOn
+
 
     def prohibit(self):
-        self.isOn = False
+        if 'auto' == self.mode:
+            self.isOn = False
+        return self.isOn
 
     def push(self):
         if self.isOn:

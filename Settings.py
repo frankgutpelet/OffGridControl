@@ -66,10 +66,10 @@ class Settings:
     approvals : list[Approval]
 
 
-    def __init__(self, logfile : str):
+    def __init__(self, settingsfile : str):
         self.approvals = list()
 
-        tree = ET.parse(logfile)
+        tree = ET.parse(settingsfile)
         root = tree.getroot()
 
         tagLogging = root.find("Logging")

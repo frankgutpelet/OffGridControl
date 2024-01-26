@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Settings>
+    <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
+    <Approvals>
+        <!--
+            prio: 0 - 10
+            supply: surplus|solar|bat|utility
+        -->
+        <App name="approval1" dns="app1" prio="5" supply="solar" mode="on"/>
+        <App name="approval2" dns="app1" prio="5" supply="solar" mode="off"/>
+        <App name="approval3" dns="solarfreigabe2" prio="3" supply="utility" mode="on">
+            <Timer on="7:00" off="7:00"/>
+        </App>
+        <App name="approval4" dns="solarfreigabe2" prio="3" supply="utility" mode="on">
+            <Timer on="0:00" off="0:00"/>
+        </App>
+        <App name="approval5" dns="app1" prio="5" supply="solar" mode="auto"/>
+        <App name="approval6" dns="solarfreigabe2" prio="3" supply="utility" mode="on">
+            <Timer on="7:00" off="7:00"/>
+        </App>
+        <App name="approval7" dns="solarfreigabe2" prio="3" supply="utility" mode="on">
+            <Timer on="0:00" off="0:00"/>
+        </App>
+    </Approvals>
+</Settings>

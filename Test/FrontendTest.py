@@ -1,6 +1,7 @@
 import unittest
 from Frontend import Frontend
 from IFifo import IFifo
+from LoggerStub import LoggerStub
 
 class FrontendTest(unittest.TestCase):
     class FifoMock(IFifo):
@@ -20,14 +21,6 @@ class FrontendTest(unittest.TestCase):
 
         def write(self, message: str):
             self.msg += message
-
-    class LoggerStub:
-        error = ""
-        def Debug(self, msg):
-            pass
-        def Error(self, msg):
-            self.error = msg
-
 
     def test_GivenDeviceUpdated_WhenSendData_ThenWriteFifo(self):
         fifo = self.FifoMock('')
