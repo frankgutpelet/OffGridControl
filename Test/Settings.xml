@@ -6,10 +6,10 @@
             prio: 0 - 10
             supply: surplus|solar|bat|utility
         -->
-        <App name="approval1" dns="solarfreigabe1" prio="5" supply="solar" status="auto">
+        <App name="approval1" dns="solarfreigabe1" prio="5" supply="solar" mode="auto">
             <Timer on="0:00" off="0:00"/>
         </App>
-         <App name="approval2" dns="solarfreigabe2" prio="3" supply="utility" status="on">
+         <App name="approval2" dns="solarfreigabe2" prio="3" supply="utility" mode="on">
             <Timer on="7:00" off="16:00"/>
         </App>
     </Approvals>

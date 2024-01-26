@@ -9,7 +9,7 @@ class Settings:
         UTILITY = 'Utility'
         names = [SURPLUS, SOLAR, BATTERY, UTILITY]
 
-    class E_STATE:
+    class E_MODE:
         ON = 'On'
         OFF = 'Off'
         AUTO = 'Auto'
@@ -20,7 +20,7 @@ class Settings:
                 if name.upper() == value.upper():
                     return value
 
-    class Timer():
+    class Timer:
         onTime : time
         offTime : time
         def __init__(self, onTime : str, offTime : str):
@@ -33,7 +33,7 @@ class Settings:
         dns : str
         prio : int
         supply : str
-        status : str
+        mode : str
         timers : list
 
         def __init__(self, config : ET.Element):
@@ -41,7 +41,7 @@ class Settings:
             self.dns = config.attrib['dns']
             self.prio = int(config.attrib['prio'])
             self.supply = self._getByStr(config.attrib['supply'], Settings.E_SUPPLY.names)
-            self.status = self._getByStr(config.attrib['status'], Settings.E_STATE.names)
+            self.mode = self._getByStr(config.attrib['mode'], Settings.E_MODE.names)
             self.timers = list()
             for timerConfig in config.findall('Timer'):
                 self.timers.append(Settings.Timer(timerConfig.attrib['on'], timerConfig.attrib['off']))

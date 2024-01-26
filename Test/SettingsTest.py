@@ -22,7 +22,7 @@ class SettimgsTest(unittest.TestCase):
 
     def test_GivenApproval2_WhenInitialize_ThenStateAuto(self):
         settings = Settings("Settings.xml")
-        self.assertEqual("Auto", settings.getApproval("approval2").status)
+        self.assertEqual("Auto", settings.getApproval("approval2").mode)
 
     def test_GivenApproval1_WhenInitialize_ThenDNSSolarfreigabe2(self):
         settings = Settings("Settings.xml")
@@ -38,7 +38,7 @@ class SettimgsTest(unittest.TestCase):
 
     def test_GivenApproval2_WhenInitialize_ThenStateAuto(self):
         settings = Settings("Settings.xml")
-        self.assertEqual("On", settings.getApproval("approval2").status)
+        self.assertEqual("On", settings.getApproval("approval2").mode)
 
     def test_GivenApproval2_WhenInitialize_ThenTimerOn7h(self):
         settings = Settings("Settings.xml")
