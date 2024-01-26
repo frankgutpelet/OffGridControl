@@ -32,6 +32,7 @@ class Consumer(IConsumer):
     timeswitch : TimeSwitch
     isOn : bool
     logger : Logging
+    timestampOn : int
 
     def __init__(self, settings : Settings.Approval, logger : Logging):
         self.name = settings.name
@@ -40,6 +41,7 @@ class Consumer(IConsumer):
         self.mode = settings.mode
         self.prio = settings.prio
         self.logger = logger
+        self.timestampOn = 0
         if  0 < len(settings.timers):
             self.timeswitch = TimeSwitch(settings.timers)
         else:
@@ -56,6 +58,8 @@ class Consumer(IConsumer):
         if self.timeswitch:
             self.isOn = self.timeswitch.isOn(datetime.now().time())
         else:
+            if not self.isOn:
+                self.timestampOn = datetime.now().timestamp()
             self.isOn = True
 
         return self.isOn
@@ -75,3 +79,6 @@ class Consumer(IConsumer):
             response = requests.get(self.__dns + "/cm?cmnd=Power%20" + cmd)
         except Exception:
             self.logger.Error("No connection to " + self.name + "(DNS: " + self.__dns + ")")
+
+    def onTime(self):
+        return datetime.now().timestamp() - self.timestampOn

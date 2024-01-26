@@ -9,5 +9,9 @@ class IConsumerManager(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def updateConsumers(self, consumerList : list(IConsumer)):
+    def updateConsumers(self, consumerList : list):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def manageApprovals(self):
         raise NotImplementedError()

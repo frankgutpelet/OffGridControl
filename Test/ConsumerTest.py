@@ -3,6 +3,7 @@ from Consumer import Consumer, TimeSwitch
 from datetime import time, datetime
 from Settings import Settings
 from LoggerStub import LoggerStub
+import time as tim
 class ConsumerTest(unittest.TestCase):
 
 
@@ -140,6 +141,28 @@ class ConsumerTest(unittest.TestCase):
         consumer = Consumer(settings.approvals[6], logger)
 
         self.assertTrue(consumer.approve())
+
+    def test_GivenSwitchedOnOnesecond_WhenIsOn_ThenGetbetweenOneAndTwoSeconds(self):
+
+        settings = Settings("ConsumerTestSettings.xml")
+        logger = LoggerStub()
+        consumer = Consumer(settings.approvals[4], logger)
+
+        consumer.approve()
+        tim.sleep(1)
+        self.assertAlmostEqual(1, consumer.onTime(),delta=1)
+
+    def test_GivenUsedTimerSwitchedOnOnesecond_WhenIsOn_ThenGetbetweenOneAndTwoSeconds(self):
+
+        settings = Settings("ConsumerTestSettings.xml")
+        logger = LoggerStub()
+        consumer = Consumer(settings.approvals[4], logger)
+
+        consumer.timestampOn = 20
+
+        consumer.approve()
+        tim.sleep(1)
+        self.assertAlmostEqual(1, consumer.onTime(),delta=1)
 
 if __name__ == '__main__':
     unittest.main()

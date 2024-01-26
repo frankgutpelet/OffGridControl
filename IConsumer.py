@@ -22,3 +22,7 @@ class IConsumer(ABC):
     @abstractmethod
     def push(self):
         raise NotImplementedError()
+
+    @abstractmethod
+    def onTime(self):
+        raise NotImplementedError()
