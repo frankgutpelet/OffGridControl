@@ -35,6 +35,7 @@ class Settings:
         supply : str
         mode : str
         timers : list
+        minTimeRunningMinutes : int
 
         def __init__(self, config : ET.Element):
             self.name = config.attrib['name']
@@ -42,6 +43,10 @@ class Settings:
             self.prio = int(config.attrib['prio'])
             self.supply = self._getByStr(config.attrib['supply'], Settings.E_SUPPLY.names)
             self.mode = self._getByStr(config.attrib['mode'], Settings.E_MODE.names)
+            if ('minTimeRunningMinutes' in config.attrib):
+                self.minTimeRunningMinutes = config.attrib['minTimeRunningMinutes']
+            else:
+                self.minTimeRunningMinutes = 0
             self.timers = list()
             for timerConfig in config.findall('Timer'):
                 self.timers.append(Settings.Timer(timerConfig.attrib['on'], timerConfig.attrib['off']))
@@ -55,6 +60,9 @@ class Settings:
         __validLoglevels = ["DEBUG", "ERROR", "INFO"]
         loglevel : int
         __logFile : str
+        inverterMinimumVoltage : int
+        switchDelaySeconds : int
+        floatVoltage : int
 
         def __init__(self, loglevel : str, logfile : str):
 
@@ -68,13 +76,14 @@ class Settings:
 
     def __init__(self, settingsfile : str):
         self.approvals = list()
-
         tree = ET.parse(settingsfile)
         root = tree.getroot()
 
         tagLogging = root.find("Logging")
         self.logging = self.Logging(tagLogging.attrib['loglevel'], tagLogging.attrib['file'])
-
+        self.inverterMinimumVoltage = int(root.find("InverterSettings").attrib['minimumVoltage'])
+        self.switchDelaySeconds = int(root.find("InverterSettings").attrib['switchDelaySeconds'])
+        self.floatVoltage = int(root.find("InverterSettings").attrib['floatVoltage'])
 
         for app in root.find('Approvals').findall('App'):
             self.approvals.append(self.Approval(app))

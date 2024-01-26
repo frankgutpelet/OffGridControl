@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Settings>
+    <InverterSettings minimumVoltage="24" floatVoltage="28" switchDelaySeconds="60"/>
     <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
     <Approvals>
         <!--

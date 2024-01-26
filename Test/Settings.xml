@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Settings>
+    <InverterSettings minimumVoltage="24" floatVoltage="28" switchDelaySeconds="60"/>
     <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
     <Approvals>
         <!--
             prio: 0 - 10
             supply: surplus|solar|bat|utility
         -->
-        <App name="approval1" dns="solarfreigabe1" prio="5" supply="solar" mode="auto">
+        <App name="approval1" dns="solarfreigabe1" prio="5" supply="solar" mode="auto" minTimeRunningMinutes="10">
             <Timer on="0:00" off="0:00"/>
         </App>
          <App name="approval2" dns="solarfreigabe2" prio="3" supply="utility" mode="on">

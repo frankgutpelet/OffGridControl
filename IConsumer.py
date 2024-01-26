@@ -6,6 +6,8 @@ class IConsumer(ABC):
     supply : str #Settings.E_SUPPLY
     mode : str # Settings.E_MODE
     name : str
+    isOn: bool
+    minTime : int
 
     @abstractmethod
     def __init__(self, settings : Element):

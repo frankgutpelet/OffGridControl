@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 class IInverter(ABC):
-    _chargerData = {'batv', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
+    _chargerData = {'batV', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
     @abstractmethod
     def __init__(self):
         raise NotImplementedError()

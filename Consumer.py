@@ -30,7 +30,6 @@ class Consumer(IConsumer):
     name : str
     __dns : str
     timeswitch : TimeSwitch
-    isOn : bool
     logger : Logging
     timestampOn : int
 
@@ -42,6 +41,7 @@ class Consumer(IConsumer):
         self.prio = settings.prio
         self.logger = logger
         self.timestampOn = 0
+        self.minTime = settings.minTimeRunningMinutes
         if  0 < len(settings.timers):
             self.timeswitch = TimeSwitch(settings.timers)
         else:
