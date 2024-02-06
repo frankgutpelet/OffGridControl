@@ -13,7 +13,7 @@ class InverterAdapter(IInverter):
         self.__easun = easun
 
     def getChargerData(self):
-        date = None
+        data = self.__victron.getValues()
         while not data:
             data = self.__victron.getValues()
         data['supply'] = self.__easun.getMode()
