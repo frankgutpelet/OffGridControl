@@ -35,7 +35,7 @@ class OffGridControlRunner:
 
     def __thread(self):
         self._checkSettings()
-        for run in range(100):
+        for run in range(10):
             self.manager.stayAlive()
         self.manager.manageApprovals()
 
