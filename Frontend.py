@@ -10,7 +10,6 @@ class Frontend(IFrontend):
 	__fifo : IFifo
 
 	def __init__(self, fifo, logger):
-		self.__fifoPath = "/tmp/solarWatcher.fifo"
 		self.__logger = logger
 		self.__fifo = fifo
 		self._deviceList = dict()

@@ -6,6 +6,7 @@ from EASun import EASun
 from Settings import Settings
 from Com import TTYWrapper
 from Frontend import Frontend
+from FifoWrapper import FifoWrapper
 
 def main():
     comports = list()
@@ -14,7 +15,8 @@ def main():
     logger.setLogLevel(settings.logging.loglevel, False)
     victronCharger1 = TTYWrapper('/dev/ttyUSB0', 19200, logger)
     victronCharger2 = TTYWrapper('/dev/ttyUSB1', 19200, logger)
-    frontend = Frontend('tmp/solarWatcher.fifo', logger)
+    fifo = FifoWrapper('tmp/solarWatcher.fifo')
+    frontend = Frontend(fifo, logger)
     comports.append(victronCharger1)
     comports.append(victronCharger2)
     easun = EASun(logger)
