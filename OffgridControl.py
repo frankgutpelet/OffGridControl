@@ -10,6 +10,7 @@ def main():
     comports = list()
     settings = Settings('Settings.xml')
     logger = Logging()
+    logger.setLogLevel(Logging.LOGGLEVEL_DEBUG, False)
     victronCharger1 = TTYWrapper('/dev/ttyUSB0', 19200)
     victronCharger2 = TTYWrapper('/dev/ttyUSB0', 19200)
     comports.append(victronCharger1)

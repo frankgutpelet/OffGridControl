@@ -89,7 +89,8 @@ class ConsumerManager(IConsumerManager):
     def __MinimumVoltageReached(self, inverterData):
         if inverterData['batV'] < self.settings.inverterMinimumVoltage or Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             for consumer in self.consumers:
-                consumer.prohibit()
+                if consumer.prohibit():
+                    self.logger.Debug("Minimum Voltage reached: switch off " + consumer.name)
                 consumer.push()
             return True
 
@@ -103,6 +104,7 @@ class ConsumerManager(IConsumerManager):
             return
 
         if consumer.approve():
+            self.logger.Debug("Approve consumer: " + consumer.name)
             consumer.push()                                                                                             #do only a push if a switch happend
             self.lastSwitchOn = datetime.now().timestamp()
 
@@ -113,6 +115,7 @@ class ConsumerManager(IConsumerManager):
         if not consumer.isOn:
             return
         consumer.prohibit()
+        self.logger.Debug("Prohibit consumer: " + consumer.name)
         consumer.push()
 
 

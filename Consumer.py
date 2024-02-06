@@ -69,9 +69,10 @@ class Consumer(IConsumer):
 
 
     def prohibit(self):
+        ret = self.isOn
         if 'Auto' == self.mode:
             self.isOn = False
-        return self.isOn
+        return ret
 
     def push(self):
         if self.isOn:

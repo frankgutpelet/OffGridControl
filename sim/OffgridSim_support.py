@@ -9,7 +9,6 @@ import sys
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
-from mylogging import Logging
 
 import OffgridSim
 from Settings import Settings
@@ -58,8 +57,7 @@ def main(*args):
     _w1 = OffgridSim.Toplevel1(_top1)
     init()
     readSettings()
-    logger = Logger() #Logging()
-    #logger.setLogLevel("DEBUG", False)#Logger(_w1.TextLogging)
+    logger = Logger(_w1.TextLogging)
     inverter = InverterSim( _w1.TextBatV, _w1.BatI, _w1.TextSolV, _w1.chargingmode, _w1.supply)
     runner = OffGridControlRunner("config.xml", logger, inverter, simMode=True)
     Thread = threading.Thread(target=ThreadProc, args=())
