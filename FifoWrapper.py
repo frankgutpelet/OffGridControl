@@ -1,6 +1,7 @@
 import os
 from IFifo import IFifo
 from mylogging import Logging
+import socket
 
 class FifoWrapper(IFifo):
 
@@ -9,23 +10,23 @@ class FifoWrapper(IFifo):
         self.handle = None
         self.logger = logger
         try:
-            os.mkfifo(self.filepath)
+            os.mkfifo(self.filepath )
         except FileExistsError:
             self.logger.Debug(filepath + " still exists")
         pass
 
     def open(self):
-        self.handle =  open(self.filepath, "w")
-        self.logger.Debug("Open Fifo")
+        pass
 
     def close(self):
-        if self.handle:
-            self.logger.Debug("Close Fifo")
-            return self.handle.close()
-        return None
+        pass
 
     def write(self, message: str):
-        if self.handle:
-            self.logger.Debug("Write Fifo")
-            return self.handle.write(message)
-        raise Exception("invalid filehandle for Fifo")
+        try:
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect(('localhost', 23456))
+                s.sendall(message.encode())
+                self.logger.Debug("Send to Frontend: " + message)
+        except ConnectionRefusedError:
+            s.close()
+            self.logger.Debug("Connection to Frontend refused, reconnecting ...")

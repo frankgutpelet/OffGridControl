@@ -27,7 +27,6 @@ class OffGridControlRunner:
     def run(self):
         while(True):
             try:
-                self.logger.Debug("loop")
                 self.__thread()
             except:
                 self.logger.Error("Exception occured, restart thread:\n" + traceback.format_exc())
@@ -38,8 +37,10 @@ class OffGridControlRunner:
         self._checkSettings()
         for run in range(10):
             self.manager.stayAlive()
-        self.manager.manageApprovals()
         self.__updateFrontend()
+        self.manager.manageApprovals()
+        self.manager.push()
+
 
 
 

@@ -92,7 +92,6 @@ class VictronReader(IVictronReader):
 
 
     def getValues(self):
-        self.logger.Debug("Read Victron Values")
         batV = 0
         batVDiv = 0
         solV = 0
@@ -125,9 +124,7 @@ class VictronReader(IVictronReader):
 
         if 0 != batVDiv:
             batV = batV / batVDiv
-
-        self.logger.Debug("Inverter Data: " + str({'batV' : batV, 'batI' : cur, 'solV' : solV, 'todayE' : today, 'yesterdayE' : yesterday, 'charchingstate' : mod}))
-        return {'batV' : batV, 'batI' : cur, 'solV' : solV, 'todayE' : today, 'yesterdayE' : yesterday, 'charchingstate' : mod}
+        return {'batV' : batV, 'batI' : cur, 'solV' : solV, 'todayE' : today, 'yesterdayE' : yesterday, 'chargingstate' : mod}
 
 
 

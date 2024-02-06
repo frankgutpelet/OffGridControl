@@ -82,13 +82,12 @@ class Consumer(IConsumer):
         try:
             if self.requests:
                 self.logger.Debug("send command to " + self.__dns + ": " + cmd)
-                response = requests.get(self.__dns + "/cm?cmnd=Power%20" + cmd)
-                if 200 == response.status_code:
-                    self.isOn = not self.isOn
-                else:
-                    self.isOn = not self.isOn
+                self.logger.Debug(self.__dns + "/cm?cmnd=Power%20" + cmd)
+                response = requests.get("http://" + self.__dns + "/cm?cmnd=Power%20" + cmd)
+                if 200 != response.status_code:
+                    raise Exception
         except Exception:
-            self.logger.Error("No connection to " + self.name + "(DNS: " + self.__dns + ")")
+            self.logger.Error("No connection to " + self.name + "(DNS: " + self.__dns + ")" + "Response: " + str(response))
 
 
 

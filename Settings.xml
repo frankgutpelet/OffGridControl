@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Settings>
-    <InverterSettings minimumVoltage="24.5" floatVoltage="28" switchDelaySeconds="5"/>
+    <InverterSettings minimumVoltage="24.5" floatVoltage="28" switchDelaySeconds="20"/>
     <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
     <Approvals>
         <!--
             prio: 0 - 10
             supply: surplus|solar|bat|utility
         -->
-        <App name="E-Bike Ladestation" dns="solarfreigabe1" prio="5" supply="solar" mode="auto" minTimeRunningMinutes="10">
+        <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="5" supply="solar" mode="auto" minTimeRunningMinutes="10">
         </App>
-         <App name="Fußbodenheizung" dns="solarfreigabe2" prio="3" supply="surplus" mode="auto">
+         <App name="Fußbodenheizung" dns="solarfreigabe100" prio="3" supply="surplus" mode="auto">
         </App>
-        <App name="Aquarium EG" dns="solarfreigabe2" prio="2" supply="surplus" mode="auto">
+        <App name="Aquarium EG" dns="solarfreigabe11" prio="2" supply="surplus" mode="auto">
         </App>
-        <App name="Aquariumheizung DG" dns="solarfreigabe2" prio="1" supply="surplus" mode="auto">
+        <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="1" supply="surplus" mode="auto">
         </App>
     </Approvals>
 </Settings>
