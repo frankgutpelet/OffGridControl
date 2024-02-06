@@ -35,6 +35,7 @@ class ConsumerManager(IConsumerManager):
 
     def stayAlive(self):
         inverterData = self.inverter.getChargerData()
+
         self.__MinimumVoltageReached(inverterData)
 
     def manageApprovals(self):                                                                                          #switch all devices depending on mode and inverter state

@@ -12,7 +12,7 @@ def main():
     logger = Logging()
     logger.setLogLevel(settings.logging.loglevel, False)
     victronCharger1 = TTYWrapper('/dev/ttyUSB0', 19200, logger)
-    victronCharger2 = TTYWrapper('/dev/ttyUSB0', 19200, logger)
+    victronCharger2 = TTYWrapper('/dev/ttyUSB1', 19200, logger)
     comports.append(victronCharger1)
     comports.append(victronCharger2)
     easun = EASun(logger)

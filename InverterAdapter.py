@@ -15,3 +15,4 @@ class InverterAdapter(IInverter):
     def getChargerData(self):
         data = self.__victron.getValues()
         data['supply'] = self.__easun.getMode()
+        return data
