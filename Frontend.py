@@ -31,7 +31,7 @@ class Frontend(IFrontend):
 		data = self._globalData
 		data['Devices'] = self._deviceList
 
-
+		self.__logger.Debug("Send data to fifo: " + json.dump(data))
 		self.__fifo.open()
 		json.dump(data, self.__fifo)
 		self.__fifo.close()
