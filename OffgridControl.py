@@ -19,6 +19,7 @@ def main():
     victron = VictronReader(logger, comports)
     inverter = InverterAdapter(victron, easun)
     runner = OffGridControlRunner('Settings.xml', logger, inverter)
+    runner.run()
 
 
 
