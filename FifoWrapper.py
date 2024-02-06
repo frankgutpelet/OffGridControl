@@ -16,13 +16,16 @@ class FifoWrapper(IFifo):
 
     def open(self):
         self.handle =  open(self.filepath, "w")
+        self.logger.Debug("Open Fifo")
 
     def close(self):
         if self.handle:
+            self.logger.Debug("Close Fifo")
             return self.handle.close()
         return None
 
     def write(self, message: str):
         if self.handle:
+            self.logger.Debug("Write Fifo")
             return self.handle.write(message)
         raise Exception("invalid filehandle for Fifo")
