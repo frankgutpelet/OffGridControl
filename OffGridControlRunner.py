@@ -38,9 +38,9 @@ class OffGridControlRunner:
         for run in range(100):
             self.manager.stayAlive()
         self.manager.manageApprovals()
-        keys = {'batv', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
+
         globalData = dict()
-        for key in IFrontend.transferDataGlobal:
+        for key in self.frontend.transferDataGlobal:
             globalData[key] = self.manager.inverterData[key]
         self.frontend.updateGlobalData(globalData)
         for consumer in self.manager.consumers:

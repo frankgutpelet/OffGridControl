@@ -3,7 +3,7 @@ from IFifo import IFifo
 import json
 
 class Frontend(IFrontend):
-	transferDataGlobal = {'batv', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
+	transferDataGlobal = {'batV', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
 	transferDataDevice = {'name', 'state', 'mode', 'ontime'}
 	_deviceList: dict
 	_globalData : dict
