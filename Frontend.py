@@ -1,6 +1,7 @@
 from IFrontend import IFrontend
 from IFifo import IFifo
 import json
+import traceback
 
 class Frontend(IFrontend):
 	transferDataGlobal = {'batV', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'charchingstate'}
@@ -31,9 +32,12 @@ class Frontend(IFrontend):
 		data['Devices'] = self._deviceList
 
 		self.__logger.Debug("Send data to fifo: " + json.dumps(data))
-		self.__fifo.open()
-		json.dump(data, self.__fifo)
-		self.__fifo.close()
+		try:
+			self.__fifo.open()
+			json.dump(data, self.__fifo)
+			self.__fifo.close()
+		except:
+			self.__logger.Error("Failed writing to Fifo" + traceback.format_exc())
 		self.__logger.Debug("Data sent")
 
 	def __checkParam(self, param : list, pattern: list):
