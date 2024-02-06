@@ -30,7 +30,7 @@ class OffGridControlRunner:
                 self.__thread()
             except:
                 self.logger.Error("Exception occured, restart thread:\n" + traceback.format_exc())
-                time.sleep(30)
+                time.sleep(10)
 
 
     def __thread(self):
