@@ -48,6 +48,7 @@ class OffGridControlRunner:
             if consumer.isOn:
                 state = 'On'
             self.frontend.updateDevice({'name' : consumer.name, 'state' : state, 'mode' : consumer.mode, 'ontime' : str(consumer.onTime())})
+        self.frontend.sendData()
 
     def _checkSettings(self):
         if self.settingsTimestamp != os.path.getmtime(self.settingsFile):
