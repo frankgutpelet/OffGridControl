@@ -11,13 +11,15 @@ class ConsumerManager(IConsumerManager):
     consumers : list
     settings : Settings
     lastSwitchOn : int
+    simMode : bool
 
-    def __init__(self, inverter : IInverter, logging : Logging, settings : Settings):
+    def __init__(self, inverter : IInverter, logging : Logging, settings : Settings, simMode = False):
         self.inverter = inverter
         self.logger = logging
         self.consumers = list()
         self.settings = settings
         self.lastSwitchOn = 0
+        self.simMode = simMode
 
     def updateConsumerList(self, consumerList : list):                                                                  #update list of consumers (after configuration change)
         self.consumers.clear()
@@ -25,7 +27,15 @@ class ConsumerManager(IConsumerManager):
             for consumer in consumerList:
                 consumer: IConsumer
                 if prio == consumer.prio:
+                    if self.simMode:
+                        consumer.requests = False
                     self.consumers.append(consumer)
+
+
+
+    def stayAlive(self):
+        inverterData = self.inverter.getChargerData()
+        self.__MinimumVoltageReached(inverterData)
 
     def manageApprovals(self):                                                                                          #switch all devices depending on mode and inverter state
         inverterData = self.inverter.getChargerData()
@@ -63,11 +73,10 @@ class ConsumerManager(IConsumerManager):
             consumer.push()
 
 
-
     def __getInverterState(self, inverterData : list()):
         if Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             return Settings.E_SUPPLY.UTILITY
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 2 > inverterData['batI']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 2 > inverterData['batI'] and inverterData['chargingstate'] not in ['Abs', 'Float']:
             return Settings.E_SUPPLY.BATTERY
         if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and self.settings.floatVoltage > inverterData['batV']:
             return Settings.E_SUPPLY.SOLAR
@@ -78,7 +87,7 @@ class ConsumerManager(IConsumerManager):
 
 
     def __MinimumVoltageReached(self, inverterData):
-        if inverterData['batV'] < self.settings.inverterMinimumVoltage:
+        if inverterData['batV'] < self.settings.inverterMinimumVoltage or Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             for consumer in self.consumers:
                 consumer.prohibit()
                 consumer.push()

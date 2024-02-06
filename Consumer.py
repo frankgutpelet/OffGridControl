@@ -32,6 +32,7 @@ class Consumer(IConsumer):
     timeswitch : TimeSwitch
     logger : Logging
     timestampOn : int
+    requests : bool
 
     def __init__(self, settings : Settings.Approval, logger : Logging):
         self.name = settings.name
@@ -41,7 +42,9 @@ class Consumer(IConsumer):
         self.prio = settings.prio
         self.logger = logger
         self.timestampOn = 0
-        self.minTime = settings.minTimeRunningMinutes
+        self.minTime = int(settings.minTimeRunningMinutes)
+        self.requests = True
+
         if  0 < len(settings.timers):
             self.timeswitch = TimeSwitch(settings.timers)
         else:
@@ -66,7 +69,7 @@ class Consumer(IConsumer):
 
 
     def prohibit(self):
-        if 'auto' == self.mode:
+        if 'Auto' == self.mode:
             self.isOn = False
         return self.isOn
 
@@ -76,9 +79,17 @@ class Consumer(IConsumer):
         else:
             cmd = "off"
         try:
-            response = requests.get(self.__dns + "/cm?cmnd=Power%20" + cmd)
+            if self.requests:
+                self.logger.Debug("send command to " + self.__dns + ": " + cmd)
+                response = requests.get(self.__dns + "/cm?cmnd=Power%20" + cmd)
+                if 200 == response.status_code:
+                    self.isOn = not self.isOn
+                else:
+                    self.isOn = not self.isOn
         except Exception:
             self.logger.Error("No connection to " + self.name + "(DNS: " + self.__dns + ")")
+
+
 
     def onTime(self):
         return datetime.now().timestamp() - self.timestampOn

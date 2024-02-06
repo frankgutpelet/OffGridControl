@@ -17,7 +17,8 @@ class TTYWrapper(ICom):
         return self.handle.readline()
 
     def connect(self):
-        return self.handle = Serial(self.com, self.baud)
+        self.handle = Serial(self.com, self.baud)
+        return self.handle
 
     def disconnect(self):
         return self.handle.close()

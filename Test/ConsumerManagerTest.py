@@ -5,18 +5,22 @@ from LoggerStub import LoggerStub
 from IConsumer import IConsumer
 
 class InverterMock(IInverter):
+
     def __init__(self):
+        self.data = {'batV': 25, 'batI': 5, 'solV': 60, 'todayE': 0, 'yesterdayE': 0, 'supply': 'Solar',
+                     'charchingstate': 'float'}
         pass
 
     def getChargerData(self):
-        return {'batV' : 25, 'batI' : 5, 'solV' : 60, 'todayE' : 0, 'yesterdayE' : 0, 'supply' : 'Solar', 'charchingstate' : 'float'}
+        return self.data
 
 class ConsumerMock(IConsumer):
     prio : int
     isOn = False
     pushed = False
-    onTime = 0
+    on = 0
     mode = "On"
+    minTime = 0
 
     def __init__(self,  prio : int):
         self.prio = prio
@@ -28,13 +32,15 @@ class ConsumerMock(IConsumer):
         return ret
 
     def prohibit(self):
-        pass
+        ret = not self.isOn
+        self.isOn = False
+        return ret
 
     def push(self):
         self.pushed = True
 
     def onTime(self):
-        return  self.onTime
+        return  self.on
 
 class SettingsMock():
     inverterMinimumVoltage=24
@@ -72,6 +78,132 @@ class ConsumerManagerTest(unittest.TestCase):
         self.assertTrue(consumers[0].isOn)
         self.assertTrue(consumers[0].pushed)
 
+    def test_GivenConsumerStateOnInverterUtilityStateOn_WhenManageApprovals_SwitchOnAndDontPush(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertTrue(consumers[0].isOn)
+        self.assertFalse(consumers[0].pushed)
+
+    def test_GivenConsumerStateOffInverterUtility_WhenManageApprovals_SwitchOffAndDontPush(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].mode = "Off"
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertFalse(consumers[0].isOn)
+        self.assertFalse(consumers[0].pushed)
+
+    def test_GivenConsumerStateOffInverterUtilityStateOn_WhenManageApprovals_SwitchOffAndPush(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+        consumers[0].mode = "Off"
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertFalse(consumers[0].isOn)
+        self.assertTrue(consumers[0].pushed)
+
+    def test_GivenWellSwitchedConsumer_WhenPush_ThenPushConsumer(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+        consumers[0].mode = "Off"
+
+        manager.updateConsumerList(consumers)
+        manager.push()
+
+        self.assertTrue(consumers[0].pushed)
+
+    def test_GivenConsumerAutoSurplus_WhenUtilityMode_ThenSwitchOff(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+        consumers[0].mode = "Auto"
+        consumers[0].supply = "Surplus"
+        inverter.data['supply'] = "Utility"
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertFalse(consumers[0].isOn)
+        self.assertTrue(consumers[0].pushed)
+
+    def test_GivenConsumerAutoSurplus_WhenBatteryMode_ThenSwitchOff(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+        consumers[0].mode = "Auto"
+        consumers[0].supply = "Surplus"
+        inverter.data['supply'] = "Solar"
+        inverter.data['batI'] = 0
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertFalse(consumers[0].isOn)
+        self.assertTrue(consumers[0].pushed)
+
+    def test_GivenConsumerAutoSurplus_WhenSolarMode_ThenSwitchOff(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = True
+        consumers[0].mode = "Auto"
+        consumers[0].supply = "Surplus"
+        inverter.data['supply'] = "Solar"
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertFalse(consumers[0].isOn)
+        self.assertTrue(consumers[0].pushed)
+
+    def test_GivenConsumerAutoSurplus_WhenSurplusMode_ThenSwitchOn(self):
+        inverter = InverterMock()
+        logger = LoggerStub()
+        settings = SettingsMock
+        manager = ConsumerManager(inverter, logger, settings)
+        consumers = [ConsumerMock(1)]
+        consumers[0].isOn = False
+        consumers[0].mode = "Auto"
+        consumers[0].supply = "Surplus"
+        inverter.data['supply'] = "Solar"
+        inverter.data['batV'] = 29
+
+        manager.updateConsumerList(consumers)
+        manager.manageApprovals()
+
+        self.assertTrue(consumers[0].isOn)
+        self.assertTrue(consumers[0].pushed)
 
 
 
