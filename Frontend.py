@@ -34,6 +34,7 @@ class Frontend(IFrontend):
 		self.__fifo.open()
 		json.dump(data, self.__fifo)
 		self.__fifo.close()
+		self.__logger.Debug("Data sent")
 
 	def __checkParam(self, param : list, pattern: list):
 		for element in pattern:
