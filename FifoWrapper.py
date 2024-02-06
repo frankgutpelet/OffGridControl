@@ -1,9 +1,10 @@
 import os
 from IFifo import IFifo
+from mylogging import Logging
 
 class FifoWrapper(IFifo):
 
-    def __init__(self, filepath : str):
+    def __init__(self, filepath : str, logger : Logging):
         self.filepath = filepath
         self.handle = None
         try:
