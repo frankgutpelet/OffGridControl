@@ -7,6 +7,7 @@ class FifoWrapper(IFifo):
     def __init__(self, filepath : str, logger : Logging):
         self.filepath = filepath
         self.handle = None
+        self.logger = logger
         try:
             os.mkfifo(self.filepath)
         except FileExistsError:
