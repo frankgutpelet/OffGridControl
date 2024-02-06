@@ -92,7 +92,7 @@ class VictronReader(IVictronReader):
 
 
     def getValues(self):
-
+        self.logger.Debug("Read Victron Values")
         batV = 0
         batVDiv = 0
         solV = 0
@@ -101,7 +101,6 @@ class VictronReader(IVictronReader):
         today = 0
         yesterday = 0
         for com in self.coms:
-            self.logger.Debug("Read Victron Values")
             for i in range(3):
                 values = self.__parseVictron(com)
                 if values:
