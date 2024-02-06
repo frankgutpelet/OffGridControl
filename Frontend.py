@@ -31,10 +31,12 @@ class Frontend(IFrontend):
 		data = self._globalData
 		data['Devices'] = self._deviceList
 
+
 		self.__logger.Debug("Send data to fifo: " + json.dumps(data))
 		try:
+			output = json.dumps(data)
 			self.__fifo.open()
-			json.dump(data, self.__fifo)
+			self.__fifo.write(output)
 			self.__fifo.close()
 		except:
 			self.__logger.Error("Failed writing to Fifo" + traceback.format_exc())
