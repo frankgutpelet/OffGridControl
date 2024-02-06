@@ -8,7 +8,7 @@ class InverterAdapter(IInverter):
     __easun : IEASun
 
     def __init__(self, victron : IVictronReader, easun : IEASun ):
-        self.__victron = IVictronReader
+        self.__victron = victron
         self.__victronData = self._chargerData.remove('supply')
         self.__easun = easun
 
