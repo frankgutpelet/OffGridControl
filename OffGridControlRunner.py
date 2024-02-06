@@ -15,7 +15,7 @@ class OffGridControlRunner:
     inverter: IInverter
     frontend : IFrontend
 
-    def __init__(self, settings : str, logger : Logging, inverter : IInverter, simMode = False, frontend : IFrontend):
+    def __init__(self, settings : str, logger : Logging, inverter : IInverter, frontend : IFrontend, simMode = False):
         self.settingsFile =settings
         self.logger = logger
         self.settingsTimestamp = 0
