@@ -12,6 +12,7 @@ class ConsumerManager(IConsumerManager):
     settings : Settings
     lastSwitchOn : int
     simMode : bool
+    inverterData : dict
 
     def __init__(self, inverter : IInverter, logging : Logging, settings : Settings, simMode = False):
         self.inverter = inverter
@@ -34,9 +35,8 @@ class ConsumerManager(IConsumerManager):
 
 
     def stayAlive(self):
-        inverterData = self.inverter.getChargerData()
-
-        self.__MinimumVoltageReached(inverterData)
+        self.inverterData = self.inverter.getChargerData()
+        self.__MinimumVoltageReached(self.inverterData)
 
     def manageApprovals(self):                                                                                          #switch all devices depending on mode and inverter state
         inverterData = self.inverter.getChargerData()

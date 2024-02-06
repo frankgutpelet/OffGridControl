@@ -4,8 +4,8 @@ from IFifo import IFifo
 
 
 class IFrontend (ABC):
-    _transferDataGlobal : list
-    _transferDataDevice : list
+    transferDataGlobal : list
+    transferDataDevice : list
 
     @abstractmethod
     def __init__(self, fifo : IFifo, logger : Logging):
