@@ -81,9 +81,9 @@ class Settings:
 
         tagLogging = root.find("Logging")
         self.logging = self.Logging(tagLogging.attrib['loglevel'], tagLogging.attrib['file'])
-        self.inverterMinimumVoltage = int(root.find("InverterSettings").attrib['minimumVoltage'])
+        self.inverterMinimumVoltage = float(root.find("InverterSettings").attrib['minimumVoltage'])
         self.switchDelaySeconds = int(root.find("InverterSettings").attrib['switchDelaySeconds'])
-        self.floatVoltage = int(root.find("InverterSettings").attrib['floatVoltage'])
+        self.floatVoltage = float(root.find("InverterSettings").attrib['floatVoltage'])
 
         for app in root.find('Approvals').findall('App'):
             self.approvals.append(self.Approval(app))
