@@ -27,6 +27,7 @@ class OffGridControlRunner:
     def run(self):
         while(True):
             try:
+                self.logger.Debug("loop")
                 self.__thread()
             except:
                 self.logger.Error("Exception occured, restart thread:\n" + traceback.format_exc())
@@ -38,7 +39,12 @@ class OffGridControlRunner:
         for run in range(10):
             self.manager.stayAlive()
         self.manager.manageApprovals()
+        self.__updateFrontend()
 
+
+
+
+    def __updateFrontend(self):
         globalData = dict()
         for key in self.frontend.transferDataGlobal:
             globalData[key] = self.manager.inverterData[key]
@@ -47,7 +53,8 @@ class OffGridControlRunner:
             state = 'Off'
             if consumer.isOn:
                 state = 'On'
-            self.frontend.updateDevice({'name' : consumer.name, 'state' : state, 'mode' : consumer.mode, 'ontime' : str(consumer.onTime())})
+            self.frontend.updateDevice(
+                {'name': consumer.name, 'state': state, 'mode': consumer.mode, 'ontime': str(consumer.onTime())})
         self.frontend.sendData()
 
     def _checkSettings(self):
