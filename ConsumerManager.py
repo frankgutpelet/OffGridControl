@@ -46,28 +46,50 @@ class ConsumerManager(IConsumerManager):
                 return
 
             if "On" == consumer.mode:
-                self.__switchOn(consumer)
+                if self.__switchOn(consumer):
+                    return
                 continue
             if "Off" == consumer.mode:
-                self.__switchOff(consumer)
+                if self.__switchOff(consumer):
+                    return
                 continue
 
             if Settings.E_SUPPLY.UTILITY == consumer.supply:
-                self.__switchOn(consumer)
+                if self.__switchOn(consumer):
+                    return
                 continue
             if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState in [Settings.E_SUPPLY.SURPLUS,
                                                                                   Settings.E_SUPPLY.SOLAR,
                                                                                   Settings.E_SUPPLY.BATTERY]:
-                self.__switchOn(consumer)
+                if self.__switchOn(consumer):
+                    return
                 continue
             if Settings.E_SUPPLY.SOLAR == consumer.supply and inverterState in [Settings.E_SUPPLY.SURPLUS,
                                                                                 Settings.E_SUPPLY.SOLAR]:
-                self.__switchOn(consumer)
+                if self.__switchOn(consumer):
+                    return
                 continue
             if Settings.E_SUPPLY.SURPLUS == consumer.supply and inverterState == Settings.E_SUPPLY.SURPLUS:
-                self.__switchOn(consumer)
+                if self.__switchOn(consumer):
+                    return
                 continue
-            self.__switchOff(consumer)
+
+        for consumer in reversed(self.consumers):
+            if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
+                                                                                  Settings.E_SUPPLY.SOLAR,
+                                                                                  Settings.E_SUPPLY.BATTERY]:
+                if self.__switchOff(consumer):
+                    return
+                continue
+            if Settings.E_SUPPLY.SOLAR == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
+                                                                                Settings.E_SUPPLY.SOLAR]:
+                if self.__switchOff(consumer):
+                    return
+                continue
+            if Settings.E_SUPPLY.SURPLUS == consumer.supply and inverterState != Settings.E_SUPPLY.SURPLUS:
+                if self.__switchOff(consumer):
+                    return
+                continue
 
     def push(self):                                                                                                     #function to update devices independend from status change
         for consumer in self.consumers:
@@ -99,25 +121,30 @@ class ConsumerManager(IConsumerManager):
         now = datetime.now().timestamp()
 
         if (0 != self.lastSwitchOn) and (self.settings.switchDelaySeconds > (now - self.lastSwitchOn)):                 # do not switch if the last switch was not long enough ago
-            return
+            return False
 
         if consumer.isOn:
-            return
+            return False
 
         if consumer.approve():
             self.logger.Debug("Approve consumer: " + consumer.name)
             consumer.push()                                                                                             #do only a push if a switch happend
             self.lastSwitchOn = datetime.now().timestamp()
+            return True
+        return False
+
 
 
     def __switchOff(self, consumer : IConsumer):
         if (consumer.minTime * 60)  > consumer.onTime():                                                                #switch off after minimal runtime
-            return
+            return False
         if not consumer.isOn:
-            return
+            return False
         if consumer.prohibit(False):
             self.logger.Debug("Prohibit consumer: " + consumer.name)
-        consumer.push()
+            consumer.push()
+            return True
+
 
 
 
