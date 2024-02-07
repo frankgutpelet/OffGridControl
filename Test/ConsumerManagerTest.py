@@ -8,7 +8,7 @@ class InverterMock(IInverter):
 
     def __init__(self):
         self.data = {'batV': 25, 'batI': 5, 'solV': 60, 'todayE': 0, 'yesterdayE': 0, 'supply': 'Solar',
-                     'charchingstate': 'float'}
+                     'chargingstate': 'float'}
         pass
 
     def getChargerData(self):
@@ -21,6 +21,7 @@ class ConsumerMock(IConsumer):
     on = 0
     mode = "On"
     minTime = 0
+    name = ""
 
     def __init__(self,  prio : int):
         self.prio = prio
@@ -31,7 +32,7 @@ class ConsumerMock(IConsumer):
         self.isOn = True
         return ret
 
-    def prohibit(self):
+    def prohibit(self, force : bool):
         ret = not self.isOn
         self.isOn = False
         return ret

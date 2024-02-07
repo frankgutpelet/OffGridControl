@@ -88,12 +88,12 @@ class ConsumerTest(unittest.TestCase):
 
         self.assertFalse(consumer.approve())
 
-    def test_GivenConsumerConfigOn_WhenProhibit_ReturnTrue(self):
+    def test_GivenConsumerConfigOn_WhenProhibit_ReturnFalse(self):
         settings = Settings("ConsumerTestSettings.xml")
         logger = LoggerStub()
         consumer = Consumer(settings.approvals[0], logger)
 
-        self.assertTrue(consumer.prohibit())
+        self.assertFalse(consumer.prohibit(True))
 
 
     def test_GivenConsumerConfigOnTimeOff_WhenAprove_ReturnTrue(self):
@@ -124,7 +124,7 @@ class ConsumerTest(unittest.TestCase):
         logger = LoggerStub()
         consumer = Consumer(settings.approvals[4], logger)
 
-        self.assertFalse(consumer.prohibit())
+        self.assertFalse(consumer.prohibit(True))
 
     def test_GivenConsumerConfigAutoTimeOff_WhenAprove_ReturnFalse(self):
 

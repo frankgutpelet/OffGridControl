@@ -24,7 +24,7 @@ class FrontendTest(unittest.TestCase):
 
     def test_GivenDeviceUpdated_WhenSendData_ThenWriteFifo(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
+        logger = LoggerStub()
         deviceInfo = {'name' : 'Device1', 'state' : 'On', 'mode' : 'On', 'ontime' : '60'}
         frontend = Frontend(fifo, logger)
         frontend.updateDevice(deviceInfo)
@@ -33,17 +33,17 @@ class FrontendTest(unittest.TestCase):
 
     def test_GivenGlobalDataUpdated_WhenSendData_ThenWriteFifo(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
-        globalData = {'batv' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'charchingstate' : 'float'}
+        logger = LoggerStub()
+        globalData = {'batV' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'chargingstate' : 'float'}
         frontend = Frontend(fifo, logger)
         frontend.updateGlobalData(globalData)
         frontend.sendData()
-        self.assertEqual('{"batv": "20", "batI": "5", "solV": "50", "todayE": "5000", "yesterdayE": "45000", "supply": "solar", "charchingstate": "float", "Devices": {}}', fifo.msg)
+        self.assertEqual('{"batV": "20", "batI": "5", "solV": "50", "todayE": "5000", "yesterdayE": "45000", "supply": "solar", "chargingstate": "float", "Devices": {}}', fifo.msg)
 
     def test_GivenGlobalDataAndDevicesUpdated_WhenSendData_ThenWriteFifo(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
-        globalData = {'batv' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'charchingstate' : 'float'}
+        logger = LoggerStub()
+        globalData = {'batV' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'chargingstate' : 'float'}
         frontend = Frontend(fifo, logger)
         frontend.updateGlobalData(globalData)
 
@@ -53,11 +53,11 @@ class FrontendTest(unittest.TestCase):
         frontend.updateDevice(deviceInfo)
 
         frontend.sendData()
-        self.assertEqual('{"batv": "20", "batI": "5", "solV": "50", "todayE": "5000", "yesterdayE": "45000", "supply": "solar", "charchingstate": "float", "Devices": {"Device1": {"name": "Device1", "state": "On", "mode": "On", "ontime": "60"}, "Device2": {"name": "Device2", "state": "Off(AUTO)", "mode": "Auto", "ontime": "60"}}}', fifo.msg)
+        self.assertEqual('{"batV": "20", "batI": "5", "solV": "50", "todayE": "5000", "yesterdayE": "45000", "supply": "solar", "chargingstate": "float", "Devices": {"Device1": {"name": "Device1", "state": "On", "mode": "On", "ontime": "60"}, "Device2": {"name": "Device2", "state": "Off(AUTO)", "mode": "Auto", "ontime": "60"}}}', fifo.msg)
 
     def test_GivenwrongDeviceUpdateParameterlist_WhenUpdateDevice_ThenException(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
+        logger = LoggerStub()
         deviceInfo = {'Name' : 'Device1', 'state' : 'On', 'mode' : 'On', 'ontime' : '60'}
         frontend = Frontend(fifo, logger)
         try:
@@ -69,7 +69,7 @@ class FrontendTest(unittest.TestCase):
 
     def test_GivenUncompleteGlobalParameterlist_WhenUpdateGlobalData_ThenException(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
+        logger = LoggerStub()
         globalData = {'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'charchingstate' : 'float'}
         frontend = Frontend(fifo, logger)
         try:
@@ -81,8 +81,8 @@ class FrontendTest(unittest.TestCase):
 
     def test_GivenAdditionalDataGlobalParameterlist_WhenUpdateGlobalData_ThenException(self):
         fifo = self.FifoMock('')
-        logger = self.LoggerStub()
-        globalData = {'batv' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'charchingstate' : 'float', 'Das' : 'darf nicht drin sein'}
+        logger = LoggerStub()
+        globalData = {'batV' : '20', 'batI' : '5', 'solV' : '50', 'todayE': '5000', 'yesterdayE' : '45000', 'supply' : 'solar', 'charchingstate' : 'float', 'Das' : 'darf nicht drin sein'}
         frontend = Frontend(fifo, logger)
         try:
             frontend.updateGlobalData(globalData)
