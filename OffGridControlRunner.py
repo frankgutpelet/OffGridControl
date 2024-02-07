@@ -34,10 +34,12 @@ class OffGridControlRunner:
 
 
     def __thread(self):
-        self._checkSettings()
         for run in range(10):
             self.manager.stayAlive()
             time.sleep(1)
+            if self._checkSettings():
+                self.manager.settings = self.settings
+                break
         self.manager.manageApprovals()
         self.manager.push()
         self.__updateFrontend()
@@ -67,4 +69,8 @@ class OffGridControlRunner:
             for approval in self.settings.approvals:
                 consumers.append(Consumer(approval, self.logger))
             self.manager.updateConsumerList(consumers)
+            self.frontend.clearDeviceList()
+            return True
+
+        return False
 

@@ -51,7 +51,8 @@ class Frontend(IFrontend):
 			self.__logger.Error(element + " not included in argument list: " + str(param))
 			raise Exception(element + " not included in argument list: " + str(param))
 
-
+	def clearDeviceList(self):
+		self._deviceList.clear()
 
 
 

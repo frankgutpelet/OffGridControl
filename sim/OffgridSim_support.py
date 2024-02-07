@@ -74,6 +74,9 @@ class FrontendMock(IFrontend):
                 lables[iterator][1]['text'] = self.transferDataList['Device'][device]['mode']
                 iterator += 1
 
+        def clearDeviceList(self):
+            self.transferDataList['Device'].clear()
+
 
 def main(*args):
     '''Main entry point for the application.'''

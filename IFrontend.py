@@ -15,9 +15,14 @@ class IFrontend (ABC):
     def updateDevice(self, transferData : list):
         raise NotImplementedError()
 
+    @abstractmethod
     def updateGlobalData(self, transferData : list):
         raise NotImplementedError()
 
     @abstractmethod
     def sendData(self):
         raise NotImplementedError()
+
+    @abstractmethod
+    def clearDeviceList(self):
+        raise  NotImplementedError
