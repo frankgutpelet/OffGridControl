@@ -15,7 +15,7 @@
         </App>
         <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="1" supply="surplus" mode="auto">
         </App>
-		<App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="surplus" mode="auto">
+		<App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="solar" mode="auto">
         </App>
     </Approvals>
 </Settings>
