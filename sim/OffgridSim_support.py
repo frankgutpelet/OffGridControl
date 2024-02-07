@@ -15,7 +15,8 @@ from Settings import Settings
 from OffGridControlRunner import OffGridControlRunner
 import threading
 from IInverter import IInverter
-
+from IFrontend import IFrontend
+import json
 _debug = True # False to eliminate debug printing from callback functions.
 lables : list
 settings : Settings
@@ -42,13 +43,41 @@ class InverterSim (IInverter):
 
     def getChargerData(self):
 
-        return {'batV' : float(self.batV.get(1.0, tk.END)), 'batI' : float(self.batI.get(1.0, tk.END)), 'solV' : float(self.solV.get(1.0, tk.END)), 'supply' : self.supply.get(), 'chargingstate' : self.chargingmode.get()}
+        return {'batV' : float(self.batV.get(1.0, tk.END)), 'batI' : float(self.batI.get(1.0, tk.END)), 'solV' : float(self.solV.get(1.0, tk.END)), 'supply' : self.supply.get(), 'chargingstate' : self.chargingmode.get(), 'yesterdayE' : 0, 'todayE' : 0}
 
+class FrontendMock(IFrontend):
+        transferDataGlobal = {'batV', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'chargingstate'}
+        transferDataDevice = {'name', 'state', 'mode', 'ontime'}
+        transferDataList : dict
+
+        lastData : str
+
+        def __init__(self, fifo, logger):
+            self.logger = logger
+            self.lastData = str()
+            self.transferDataList = dict()
+            self.transferDataList['Device'] = dict()
+            pass
+
+        def updateDevice(self, transferData: list):
+            self.transferDataList['Device'][transferData['name']] = transferData
+
+        def updateGlobalData(self, transferData: dict):
+            for glob in transferData:
+                self.transferDataList[glob] = transferData[glob]
+
+        def sendData(self):
+            iterator = 0
+            for device in self.transferDataList['Device']:
+                lables[iterator][0]['text'] = device
+                lables[iterator][2]['text'] = self.transferDataList['Device'][device]['state']
+                lables[iterator][1]['text'] = self.transferDataList['Device'][device]['mode']
+                iterator += 1
 
 
 def main(*args):
     '''Main entry point for the application.'''
-    global root, Thread, logger, inverter, runner
+    global root, Thread, logger, inverter, runner, frontend
     root = tk.Tk()
     root.protocol( 'WM_DELETE_WINDOW' , root.destroy)
     # Creates a toplevel widget.
@@ -59,23 +88,23 @@ def main(*args):
     readSettings()
     logger = Logger(_w1.TextLogging)
     inverter = InverterSim( _w1.TextBatV, _w1.BatI, _w1.TextSolV, _w1.chargingmode, _w1.supply)
-    runner = OffGridControlRunner("config.xml", logger, inverter, simMode=True)
+    frontend = FrontendMock(None, logger)
+    runner = OffGridControlRunner("config.xml", logger, inverter, frontend, simMode=True)
     Thread = threading.Thread(target=ThreadProc, args=())
     Thread.start()
-    Thread2 = threading.Thread(target=updateGui, args=())
-    Thread2.start()
+    #Thread2 = threading.Thread(target=updateGui, args=())
+    #Thread2.start()
     root.mainloop()
 
 def readSettings():
     global settings
     settings = Settings("config.xml")
-    iterator = 0
+   # iterator = 0
 
-    for device in settings.approvals:
-        lables[iterator][0]['text'] = device.name
-        lables[iterator][1]['text'] = device.mode
-        lables[iterator][2]['text'] = "Off"
-        iterator +=1
+    #for device in settings.approvals:
+     #   lables[iterator][0]['text'] = device.name
+      #  lables[iterator][1]['text'] = device.mode
+       # iterator +=1
 
 def init():
     global lables, chargingmode, supply
@@ -98,6 +127,55 @@ def init():
     _w1.TextBatV.insert("1.0", "24.0")
     _w1.BatI.insert("1.0", "0")
     _w1.TextSolV.insert("1.0", "60.0")
+
+
+def ButtonSolVDownPressed(e):
+    solV = round(float(_w1.TextSolV.get(1.0, tk.END)) - 0.1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.TextSolV.delete("1.0", tk.END)
+    _w1.TextSolV.insert("1.0", str(solV))
+
+def ButtonSolVUpPressed(e):
+    solV = round(float(_w1.TextSolV.get(1.0, tk.END)) + 0.1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.TextSolV.delete("1.0", tk.END)
+    _w1.TextSolV.insert("1.0", str(solV))
+
+def ButtonBatVDownPressed(e):
+    solV = round(float(_w1.TextBatV.get(1.0, tk.END)) - 0.1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.TextBatV.delete("1.0", tk.END)
+    _w1.TextBatV.insert("1.0", str(solV))
+
+def ButtonBatVUpPressed(e):
+    solV = round(float(_w1.TextBatV.get(1.0, tk.END)) + 0.1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.TextBatV.delete("1.0", tk.END)
+    _w1.TextBatV.insert("1.0", str(solV))
+
+def ButtonBatIDownPressed(e):
+    solV = round(float(_w1.BatI.get(1.0, tk.END)) - 1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.BatI.delete("1.0", tk.END)
+    _w1.BatI.insert("1.0", str(solV))
+
+def ButtonBatIUpPressed(e):
+    solV = round(float(_w1.BatI.get(1.0, tk.END)) + 1, 1)
+    if 0 > solV:
+        solV = 0
+    _w1.BatI.delete("1.0", tk.END)
+    _w1.BatI.insert("1.0", str(solV))
+
+def ButtonFrontendTextPressed(e):
+    global logger, frontend
+    logger.Debug(json.dumps(frontend.transferDataList))
+
+
 
 
 def ThreadProc():
