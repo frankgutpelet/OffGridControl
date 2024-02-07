@@ -18,7 +18,7 @@ class IConsumer(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def prohibit(self):
+    def prohibit(self, force : bool):
         raise NotImplementedError()
 
     @abstractmethod

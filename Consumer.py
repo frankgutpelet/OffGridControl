@@ -6,7 +6,7 @@ from mylogging import Logging
 import requests
 
 class TimeSwitch():
-    times : list()
+    times : list
 
     def __init__(self, times : list() ):
         self.times = times
@@ -33,6 +33,8 @@ class Consumer(IConsumer):
     logger : Logging
     timestampOn : int
     requests : bool
+    prohibitCounter: int
+    maxSoftProhibits = 5
 
     def __init__(self, settings : Settings.Approval, logger : Logging):
         self.name = settings.name
@@ -44,6 +46,7 @@ class Consumer(IConsumer):
         self.timestampOn = 0
         self.minTime = int(settings.minTimeRunningMinutes)
         self.requests = True
+        self.prohibitCounter = 0
 
         if  0 < len(settings.timers):
             self.timeswitch = TimeSwitch(settings.timers)
@@ -56,6 +59,7 @@ class Consumer(IConsumer):
 
 
     def approve(self):
+        self.prohibitCounter = 0
         if not 'Auto' == self.mode:
             return self.isOn
         if self.timeswitch:
@@ -68,10 +72,13 @@ class Consumer(IConsumer):
         return self.isOn
 
 
-    def prohibit(self):
-        ret = self.isOn
-        if 'Auto' == self.mode:
-            self.isOn = False
+    def prohibit(self, force : bool):
+        self.prohibitCounter +=1
+        ret = False
+        if force or (self.maxSoftProhibits < self.prohibitCounter):
+            if 'Auto' == self.mode:
+                ret = self.isOn
+                self.isOn = False
         return ret
 
     def push(self):

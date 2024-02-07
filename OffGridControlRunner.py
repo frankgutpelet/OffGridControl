@@ -37,9 +37,10 @@ class OffGridControlRunner:
         self._checkSettings()
         for run in range(10):
             self.manager.stayAlive()
-        self.__updateFrontend()
+            time.sleep(1)
         self.manager.manageApprovals()
         self.manager.push()
+        self.__updateFrontend()
 
 
 
