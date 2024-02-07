@@ -7,15 +7,15 @@
             prio: 0 - 10
             supply: surplus|solar|bat|utility
         -->
-        <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="5" supply="solar" mode="auto" minTimeRunningMinutes="10">
+        <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="1" supply="surplus" mode="auto" minTimeRunningMinutes="10">
         </App>
-         <App name="Fußbodenheizung" dns="solarfreigabe100" prio="3" supply="surplus" mode="auto">
+         <App name="Fußbodenheizung" dns="solarfreigabe100" prio="4" supply="surplus" mode="auto">
         </App>
-        <App name="Aquarium EG" dns="solarfreigabe11" prio="2" supply="surplus" mode="auto">
+        <App name="Aquarium EG" dns="solarfreigabe11" prio="3" supply="surplus" mode="auto">
         </App>
-        <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="1" supply="surplus" mode="auto">
+        <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="2" supply="surplus" mode="auto">
         </App>
-		<App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="solar" mode="auto">
+		<App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="surplus" mode="auto">
         </App>
     </Approvals>
 </Settings>
