@@ -76,6 +76,9 @@ class ConsumerManager(IConsumerManager):
                 continue
 
         for consumer in reversed(self.consumers):
+            if consumer.isOn and consumer.timeswitch and not consumer.timeswitch.isOn(datetime.now().time()):
+                self.__switchOff(consumer)
+
             if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
                                                                                   Settings.E_SUPPLY.SOLAR,
                                                                                   Settings.E_SUPPLY.BATTERY]:
