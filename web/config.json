@@ -7,6 +7,8 @@
   "Pool" : {"url" :  "http://tempsensor/temp"},
   "Gefrierschrank" : {"url" : "http://solarfreigabe10/temp"},
   "Aquarium EG" : {"url" :  "http://solarfreigabe11/temp"},
-  "Aquarium DG" : {"url" :  "http://solarfreigabe12/temp"}
+  "Aquarium DG" : {"url" :  "http://solarfreigabe12/temp"},
+  "Wasserbett Frank" : {"url" :  "http://wasserbettfrank/temp"},
+  "Wasserbett Sabrina" : {"url" :  "http://wasserbettsabrina/temp"}
 
 }

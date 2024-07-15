@@ -1,21 +1,18 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" ?>
 <Settings>
-    <InverterSettings minimumVoltage="24.5" floatVoltage="28" switchDelaySeconds="20"/>
-    <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
-    <Approvals>
-        <!--
-            prio: 0 - 10
-            supply: surplus|solar|bat|utility
-        -->
-        <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="1" supply="surplus" mode="auto" minTimeRunningMinutes="10">
-        </App>
-         <App name="Fußbodenheizung" dns="solarfreigabe100" prio="4" supply="surplus" mode="auto">
-        </App>
-        <App name="Aquarium EG" dns="solarfreigabe11" prio="3" supply="surplus" mode="auto">
-        </App>
-        <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="2" supply="surplus" mode="auto">
-        </App>
-		<App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="surplus" mode="auto">
-        </App>
-    </Approvals>
+  <InverterSettings minimumVoltage="24.5" floatVoltage="28.0" switchDelaySeconds="20"/>
+  <Logging loglevel="INFO" file="log/Offgrid-[date].log"/>
+  <Approvals>
+    <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="1" supply="Surplus" mode="Auto" minTimeRunningMinutes="10"/>
+    <App name="Fussbodenheizung" dns="solarfreigabe100" prio="4" supply="Surplus" mode="Off"/>
+    <App name="Aquarium EG" dns="solarfreigabe11" prio="4" supply="Surplus" mode="Auto"/>
+    <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="2" supply="Surplus" mode="Auto"/>
+    <App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="Solar" mode="Auto"/>
+    <App name="Kuehlschrank" dns="kuehlschrank" prio="5" supply="Surplus" mode="Auto"/>
+    <App name="BettSabrina" dns="192.168.178.113" prio="3" supply="Surplus" mode="Auto"/>
+    <App name="BettFrank" dns="WasserbettFrank" prio="3" supply="Surplus" mode="Auto"/>
+    <App name="Poolfilter" dns="poolfilter" prio="0" supply="Solar" mode="AUTO">
+      <Timer on="10:0" off="18:0"/>
+    </App>
+  </Approvals>
 </Settings>

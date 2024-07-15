@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import VictronReader
 from html import unescape
-import Settings
+from Settings import Settings
 
 victronReader = VictronReader.VictronReader.GetInstance()
 # Create your views here.
@@ -21,8 +21,10 @@ def index(request):
     deviceTable = str()
 
     if 'mode' in request.GET:
-        config = Settings()
-        config.setMode(request.GET['device'], request.GET['mode'])
+        ChangeSettings(request.GET['device'], request.GET['mode'])
+        #config = Settings("/home/frank/projects/OffGridControl/Settings.xml")
+        #config.setMode(request.GET['device'], request.GET['mode'])
+
 
     for device in victronReader.devices:
         deviceTable += makeTableEntry(device['name'], device['state'])
@@ -32,3 +34,10 @@ def index(request):
                        'solarSupply': victronReader.supply, 'chargingState': victronReader.chargemode,
                        'solarPower': str(round(float(victronReader.batV) * float(victronReader.batI))), 'today' : str(victronReader.today), 'yesterday' : str(victronReader.yesterday),
                        'deviceTable': unescape(deviceTable)})
+
+def ChangeSettings(device : str, mode : str):
+    settings = Settings("../Settings.xml")
+    app = settings.getApproval(device)
+    app.mode = mode
+    settings.changeApproval(app.name, app)
+    settings.save()

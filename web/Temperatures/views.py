@@ -12,8 +12,8 @@ def index(request):
     tempReader = TempReader()
     values = tempReader.getValues()
     table = "<tbody><tr>\n" + \
-       "<td class=\"auto-style2\"><strong>Name</strong></td>\n" + \
-       "<td class=\"auto-style2\"><strong>Temperatur</strong></td>\n" + \
+       "<td class=\"auto-style1\"><strong>Name</strong></td>\n" + \
+       "<td class=\"auto-style1\"><strong>Temperatur</strong></td>\n" + \
         "</tr></tbody>"
     file = open("config.json", "r")
     config = json.load(file)
@@ -27,8 +27,8 @@ def index(request):
             for setting in config:
                 if "id" in config[setting] and value == config[setting]['id']:
                     table += "<tr>\n" + \
-                   "<td class=\"auto-style2\" style=\"width: 84px\"><strong>" + setting + "</strong></td>\n" + \
-                   "<td class=\"auto-style2\"><strong>" + temp + "°C</strong></td>\n" + \
+                   "<td class=\"auto-style1\"><strong>" + setting + "</strong></td>\n" + \
+                   "<td class=\"auto-style1\"><strong>" + temp + "°C</strong></td>\n" + \
                     "</tr>"
 
     for setting in config:
@@ -38,8 +38,8 @@ def index(request):
             except:
                 temp = "unknown"
             table += "<tr>\n" + \
-                     "<td class=\"auto-style2\" style=\"width: 84px\"><strong>" + setting + "</strong></td>\n" + \
-                     "<td class=\"auto-style2\"><strong>" + temp + "°C</strong></td>\n" + \
+                     "<td class=\"auto-style1\"><strong>" + setting + "</strong></td>\n" + \
+                     "<td class=\"auto-style1\"><strong>" + temp + "°C</strong></td>\n" + \
                      "</tr>"
 
     return render(request, 'Temperatures/base.html',

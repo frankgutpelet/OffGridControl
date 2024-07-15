@@ -28,7 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'moskitoii',
     '217.240.128.220',
-    'fgutpelet.de'
+    'fgutpelet.de',
+    'monitor.fgutpelet.duckdns.org'
 ]
 
 
@@ -42,7 +43,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Monitor',
-    'Settings',
     'Temperatures'
 ]
 

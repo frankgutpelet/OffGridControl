@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 from datetime import time
+from xml.dom import minidom
+import copy
 
 class Settings:
     class E_SUPPLY:
@@ -26,6 +28,7 @@ class Settings:
         def __init__(self, onTime : str, offTime : str):
             self.onTime = time(int(onTime.split(':')[0]), int(onTime.split(':')[1]))
             self.offTime = time(int(offTime.split(':')[0]), int(offTime.split(':')[1]))
+
 
     class Approval(Element):
 
@@ -54,12 +57,28 @@ class Settings:
         def Supply(self):
             return self.ENUM_SUPPLY[self.supply]
 
+        def addTag(self, parent):
+            config = ET.SubElement(parent, "App")
+            config.attrib['name'] = self.name
+            config.attrib['dns'] = self.dns
+            config.attrib['prio'] = str(self.prio)
+            config.attrib['supply'] = self.supply
+            config.attrib['mode'] = self.mode
+            if self.minTimeRunningMinutes != 0:
+                config.attrib['minTimeRunningMinutes'] = str(self.minTimeRunningMinutes)
+            for timer in self.timers:
+                timElem = ET.Element("Timer")
+                timElem.attrib['on'] = str(timer.onTime.hour) + ":" +  str(timer.onTime.minute)
+                timElem.attrib['off'] = str(timer.offTime.hour) + ":" +  str(timer.offTime.minute)
+                config.append(timElem)
+            return config
+
 
     class Logging(Element):
 
         __validLoglevels = ["DEBUG", "ERROR", "INFO"]
         loglevel : int
-        __logFile : str
+        logFile : str
         inverterMinimumVoltage : int
         switchDelaySeconds : int
         floatVoltage : int
@@ -67,15 +86,15 @@ class Settings:
         def __init__(self, loglevel : str, logfile : str):
 
             self.loglevel = self._getByStr(loglevel, self.__validLoglevels)
-            self.__logFile = logfile
-            self.__logFile = logfile = logfile
+            self.logFile = logfile
 
     logging : Logging
     approvals : list[Approval]
-
+    updated = False
 
     def __init__(self, settingsfile : str):
         self.approvals = list()
+        self.filename = settingsfile
         tree = ET.parse(settingsfile)
         root = tree.getroot()
 
@@ -91,13 +110,37 @@ class Settings:
     def getApproval(self, name : str):
         for app in self.approvals:
             if app.name == name:
-                return app
+                return copy.deepcopy(app)
 
         return None
 
+    def changeApproval(self, name, newApp : Approval):
+        for app in self.approvals:
+            if app.name == name:
+                if app != newApp:
+                    app.mode = newApp.mode
+                    self.updated = True
 
+    def save(self):
+        if not self.updated:
+            return
+        root = ET.Element("Settings")
+        InverterSettings = ET.SubElement(root, "InverterSettings")
+        InverterSettings.attrib["minimumVoltage"] = str(self.inverterMinimumVoltage)
+        InverterSettings.attrib["floatVoltage"] = str(self.floatVoltage)
+        InverterSettings.attrib["switchDelaySeconds"] = str(self.switchDelaySeconds)
+        Logging = ET.SubElement(root, "Logging")
+        Logging.attrib["loglevel"] = self.logging.loglevel
+        Logging.attrib["file"] = self.logging.logFile
+        Approvals = ET.SubElement(root, "Approvals")
+        for app in self.approvals:
+            app.addTag(Approvals)
 
+        string = minidom.parseString(ET.tostring(root))
 
+        output = open(self.filename, "w")
+        output.write(string.toprettyxml(indent="  "))
+        output.close()
 
     approvals : list()
 

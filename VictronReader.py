@@ -64,8 +64,8 @@ class VictronReader(IVictronReader):
         Absorption = 4
         Float = 5
         Inverting = 9
-
-        def GetState(state):
+        @classmethod
+        def GetState(cls, state):
             if VictronReader.ChargingState.Off == state:
                 return "Off"
             elif VictronReader.ChargingState.Low_power == state:
@@ -124,7 +124,7 @@ class VictronReader(IVictronReader):
 
         if 0 != batVDiv:
             batV = batV / batVDiv
-        return {'batV' : batV, 'batI' : cur, 'solV' : solV, 'todayE' : today, 'yesterdayE' : yesterday, 'chargingstate' : mod}
+        return {'batV' : batV, 'batI' : cur, 'solV' : solV, 'todayE' : today, 'yesterdayE' : yesterday, 'chargingstate' : self.ChargingState.GetState(mod)}
 
 
 

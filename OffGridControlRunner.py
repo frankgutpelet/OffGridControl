@@ -38,6 +38,7 @@ class OffGridControlRunner:
             self.manager.stayAlive()
             time.sleep(1)
             if self._checkSettings():
+                self.logger.Debug("reload Settings - File Changed")
                 self.manager.settings = self.settings
                 break
         self.manager.manageApprovals()

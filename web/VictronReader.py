@@ -50,7 +50,7 @@ class VictronReader:
                             try:
                                 data = ""
                                 while True:
-                                    data += conn.recv(1024).decode()
+                                    data += conn.recv(2048).decode()
                                     if "" != data:
                                         break
                                 logging.error("read full data")
@@ -74,18 +74,8 @@ class VictronReader:
             self.temp = "0"
             self.today = float(values['todayE'])/100.0
             self.yesterday = float(values['yesterdayE'])/100.0
-            if (0 == int(values['chargingstate'])):
-                self.chargemode = "Off"
-            elif (1 == int(values['chargingstate'])):
-                self.chargemode = "Low Power"
-            elif (3 == int(values['chargingstate'])):
-                self.chargemode = "Bulk"
-            elif (4 == int(values['chargingstate'])):
-                self.chargemode = "Absorbtion"
-            elif (5 == int(values['chargingstate'])):
-                self.chargemode = "Float"
-            else:
-                self.chargemode = "Fault"
+            self.chargemode = values['chargingstate']
+
 
             self.devices.clear()
 

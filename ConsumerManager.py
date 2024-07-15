@@ -21,9 +21,11 @@ class ConsumerManager(IConsumerManager):
         self.settings = settings
         self.lastSwitchOn = 0
         self.simMode = simMode
+        self.logger.Debug("start Consumer Manager")
 
     def updateConsumerList(self, consumerList : list):                                                                  #update list of consumers (after configuration change)
         self.consumers.clear()
+        self.logger.Debug("Update Consumer list")
         for prio in range(10):
             for consumer in consumerList:
                 consumer: IConsumer
@@ -41,6 +43,7 @@ class ConsumerManager(IConsumerManager):
     def manageApprovals(self):                                                                                          #switch all devices depending on mode and inverter state
         inverterData = self.inverter.getChargerData()
         inverterState = self.__getInverterState(inverterData)
+        self.logger.Debug("Inverterstate: " +  inverterState)
         for consumer in self.consumers:
             if self.__MinimumVoltageReached(inverterData):
                 return
@@ -78,15 +81,18 @@ class ConsumerManager(IConsumerManager):
             if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
                                                                                   Settings.E_SUPPLY.SOLAR,
                                                                                   Settings.E_SUPPLY.BATTERY]:
+                self.logger.Debug("Sitch off " + consumer.name + " SupplyState: " + inverterState)
                 if self.__switchOff(consumer):
                     return
                 continue
             if Settings.E_SUPPLY.SOLAR == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
                                                                                 Settings.E_SUPPLY.SOLAR]:
+                self.logger.Debug("Sitch off " + consumer.name + " SupplyState: " + inverterState)
                 if self.__switchOff(consumer):
                     return
                 continue
             if Settings.E_SUPPLY.SURPLUS == consumer.supply and inverterState != Settings.E_SUPPLY.SURPLUS:
+                self.logger.Debug("Sitch off " + consumer.name + " SupplyState: " + inverterState)
                 if self.__switchOff(consumer):
                     return
                 continue
@@ -97,9 +103,12 @@ class ConsumerManager(IConsumerManager):
 
 
     def __getInverterState(self, inverterData : list()):
+        self.logger.Debug("Inverter: " + str(inverterData['chargingstate']))
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and inverterData['chargingstate']  in ['Abs', 'Float']:
+            return Settings.E_SUPPLY.SURPLUS
         if Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             return Settings.E_SUPPLY.UTILITY
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 2 > inverterData['batI'] and inverterData['chargingstate'] not in ['Abs', 'Float']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 2 > inverterData['batI']:
             return Settings.E_SUPPLY.BATTERY
         if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and self.settings.floatVoltage > inverterData['batV']:
             return Settings.E_SUPPLY.SOLAR

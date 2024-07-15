@@ -1,4 +1,5 @@
 import unittest
+import os
 from Settings import Settings
 
 
@@ -43,6 +44,14 @@ class SettimgsTest(unittest.TestCase):
     def test_GivenApproval2_WhenInitialize_ThenTimerOn7h(self):
         settings = Settings("Settings.xml")
         self.assertEqual(7 , settings.getApproval('approval2').timers[0].onTime.hour)
+
+    def test_GivenInizializedWithConfig_WhenSaveConfig_ThenTimestampChanges(self):
+        configfile = "Settings.xml"
+        timestamp = os.stat(configfile).st_mtime
+        settings = Settings(configfile)
+        settings.save()
+        self.assertNotEqual(timestamp, os.stat(configfile).st_mtime)
+
 
 
 
