@@ -45,8 +45,6 @@ class ConsumerManager(IConsumerManager):
         inverterState = self.__getInverterState(inverterData)
         self.logger.Debug("Inverterstate: " +  inverterState)
         for consumer in self.consumers:
-            if self.__MinimumVoltageReached(inverterData):
-                return
 
             if "On" == consumer.mode:
                 if self.__switchOn(consumer):
