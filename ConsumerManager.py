@@ -105,7 +105,7 @@ class ConsumerManager(IConsumerManager):
 
     def __getInverterState(self, inverterData : list()):
         self.logger.Debug("Inverter: " + str(inverterData['chargingstate']))
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and inverterData['chargingstate']  in ['Abs', 'Float']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and inverterData['chargingstate']  in ['Absorption', 'Float']:
             return Settings.E_SUPPLY.SURPLUS
         if Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             return Settings.E_SUPPLY.UTILITY
