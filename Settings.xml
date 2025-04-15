@@ -1,18 +1,18 @@
 <?xml version="1.0" ?>
 <Settings>
-  <InverterSettings minimumVoltage="24.5" floatVoltage="28.0" switchDelaySeconds="20"/>
-  <Logging loglevel="INFO" file="log/Offgrid-[date].log"/>
+  <InverterSettings minimumVoltage="24.5" floatVoltage="27.0" switchDelaySeconds="10"/>
+  <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
   <Approvals>
-    <App name="E-Bike Ladestation" dns="solarfreigabe3" prio="1" supply="Surplus" mode="Auto" minTimeRunningMinutes="10"/>
-    <App name="Fussbodenheizung" dns="solarfreigabe100" prio="4" supply="Surplus" mode="Off"/>
+    <App name="BettSabrina" dns="WasserbettSabrina" prio="1" supply="Surplus" mode="Auto"/>
+    <App name="BettFrank" dns="WasserbettFrank" prio="2" supply="Surplus" mode="Auto"/>
+    <App name="E-Bike Ladestation" dns="ebike" prio="3" supply="Surplus" mode="OFF" minTimeRunningMinutes="10"/>
     <App name="Aquarium EG" dns="solarfreigabe11" prio="4" supply="Surplus" mode="Auto"/>
-    <App name="Aquariumheizung DG" dns="solarfreigabe12" prio="2" supply="Surplus" mode="Auto"/>
-    <App name="Gefrierschrank" dns="solarfreigabe10" prio="0" supply="Solar" mode="Auto"/>
-    <App name="Kuehlschrank" dns="kuehlschrank" prio="5" supply="Surplus" mode="Auto"/>
-    <App name="BettSabrina" dns="192.168.178.113" prio="3" supply="Surplus" mode="Auto"/>
-    <App name="BettFrank" dns="WasserbettFrank" prio="3" supply="Surplus" mode="Auto"/>
-    <App name="Poolfilter" dns="poolfilter" prio="0" supply="Solar" mode="AUTO">
-      <Timer on="10:0" off="18:0"/>
+    <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Solar" mode="Off">
+      <Timer on="12:0" off="18:0"/>
     </App>
+    <App name="Fussbodenheizung" dns="solarfreigabe100" prio="6" supply="Battery" mode="Off">
+      <Timer on="3:30" off="6:0"/>
+    </App>
+    <App name="Bachlauf" dns="bachlauf" prio="5" supply="Surplus" mode="Auto"/>
   </Approvals>
 </Settings>

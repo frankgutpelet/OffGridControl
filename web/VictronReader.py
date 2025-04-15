@@ -30,6 +30,8 @@ class VictronReader:
         self.yesterday = 0
         self.supply = "unknown"
         self.chargemode = "unknown"
+        self.sumI = 0
+        self.soc = 0
         self.devices = list()
         self.VictronThread = threading.Thread(target=self.ReadVictronValues, args=())
         self.VictronThread.start()
@@ -70,6 +72,8 @@ class VictronReader:
             self.batV = str(round(float(values['batV']),1))
             self.batI = str(round(float(values['batI']),1))
             self.solV = str(round(float(values['solV']),1))
+            self.sumI = str(round(float(values['sumI']),1))
+            self.soc =  str(round(float(values['soc']),0))
             self.supply = values['supply']
             self.temp = "0"
             self.today = float(values['todayE'])/100.0

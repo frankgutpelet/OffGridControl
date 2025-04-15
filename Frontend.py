@@ -2,10 +2,12 @@ from IFrontend import IFrontend
 from IFifo import IFifo
 import json
 import traceback
+from Daly import Daly
 
 class Frontend(IFrontend):
 	transferDataGlobal = {'batV', 'batI', 'solV', 'todayE', 'yesterdayE', 'supply', 'chargingstate'}
 	transferDataDevice = {'name', 'state', 'mode', 'ontime'}
+	transferDataBMS = {'batV', 'batI', 'soc'}
 	_deviceList: dict
 	_globalData : dict
 	__fifo : IFifo
@@ -15,6 +17,7 @@ class Frontend(IFrontend):
 		self.__fifo = fifo
 		self._deviceList = dict()
 		self._globalData = dict()
+		self.bms = Daly()
 
 	def updateDevice(self, transferData : list):
 		self.__checkParam(transferData, self.transferDataDevice)
@@ -29,6 +32,10 @@ class Frontend(IFrontend):
 
 	def sendData(self):
 		data = self._globalData
+		self.bms.read()
+		data['batV'] = self.bms.getVoltage()
+		data['sumI'] = self.bms.getCurrent()
+		data['soc'] = self.bms.getSOC()
 		data['Devices'] = self._deviceList
 		try:
 			output = json.dumps(data)
