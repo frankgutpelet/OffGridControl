@@ -34,8 +34,6 @@ def index(request):
 
     if 'mode' in request.GET:
         ChangeSettings(request.GET['device'], request.GET['mode'])
-        #config = Settings("/home/frank/projects/OffGridControl/Settings.xml")
-        #config.setMode(request.GET['device'], request.GET['mode'])
 
     return render(request, 'Monitor/base.html',
                       {'batV': victronReader.batV, 'batI': victronReader.batI, 'solV': victronReader.solV,
@@ -116,7 +114,6 @@ def monitor_data(request):
         'sumP' : str(calcSupP()),
         'deviceTable' : getDeviceTable()
     }
-
     return JsonResponse(data)
 
 @csrf_exempt
