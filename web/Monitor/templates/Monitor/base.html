@@ -248,7 +248,7 @@
                 <div class="tachometer-pointer" id="tachometer-pointer"></div>
             </div>
             <div class="tachometer-label" id="tachometer-label">
-                <strong>{{ solarPower }} W</strong>
+                {{ solarPower }} W
             </div>
         </div>
     </div>
@@ -289,12 +289,10 @@
 </div>
 
 <script>
-    window.onload = function () {
-        const sumI = {{ sumI }};
+    function updateGraphics(sumI, solarPower) {
         const sumIElement = document.getElementById("sumI");
         sumIElement.style.color = sumI < 0 ? "red" : "green";
 
-        const solarPower = {{ solarPower }};
         const maxPower = 3000;
         const pointerElement = document.getElementById("tachometer-pointer");
         const angle = (solarPower / maxPower) * 180;
@@ -302,19 +300,21 @@
 
         const arrow = document.getElementById("arrow");
         if (sumI > 0){
-            arrow.innerHTML = "&#8593;"
-            arrow.style = "color:green"
+            arrow.innerHTML = "&#8593;";
+            arrow.style = "color:green";
         }
         else{
             arrow.innerHTML = "&#8595;"
-            arrow.style = "color:red"
+            arrow.style = "color:red";
         }
     };
 
     function updateData() {
+        console.log("request Data");
         fetch('{% url "Monitor:monitor_data" %}')
             .then(response => response.json())
             .then(data => {
+                console.log(`UpdateData ${JSON.stringify(data)}`);
                 document.getElementById('batV').textContent = data.batV + ' V';
                 document.getElementById('batI').textContent = data.batI + ' A';
                 document.getElementById('sumI').textContent = data.sumI + ' A';
@@ -334,10 +334,8 @@
                 batteryLevel.style.backgroundColor = soc < 20 ? 'red' : 'green';
                 document.getElementById('soc-display').textContent = soc + '%';
 
-                const solarPower = parseFloat(data.solarPower);
-                const angle = (solarPower / 3000) * 180;
-                document.getElementById('tachometer-pointer').style.transform = `rotate(${angle - 90}deg)`;
-                document.getElementById('tachometer-label').textContent = solarPower + ' W';
+                document.getElementById('tachometer-label').textContent = data.solarPower + ' W';
+                updateGraphics(parseFloat(data.sumI), parseFloat(data.solarPower));
             })
             .catch(error => console.error('Fehler beim Abrufen der Daten:', error));
     }
