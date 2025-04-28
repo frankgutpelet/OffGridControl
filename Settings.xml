@@ -5,14 +5,16 @@
   <Approvals>
     <App name="BettSabrina" dns="WasserbettSabrina" prio="1" supply="Surplus" mode="Auto"/>
     <App name="BettFrank" dns="WasserbettFrank" prio="2" supply="Surplus" mode="Auto"/>
-    <App name="E-Bike Ladestation" dns="ebike" prio="3" supply="Surplus" mode="OFF" minTimeRunningMinutes="10"/>
+    <App name="E-Bike Ladestation" dns="ebike" prio="3" supply="Surplus" mode="AUTO" soc="30" minTimeRunningMinutes="10"/>
     <App name="Aquarium EG" dns="solarfreigabe11" prio="4" supply="Surplus" mode="Auto"/>
-    <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Solar" mode="Off">
+    <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Battery" soc="30" mode="Off">
       <Timer on="12:0" off="18:0"/>
     </App>
-    <App name="Fussbodenheizung" dns="solarfreigabe100" prio="6" supply="Battery" mode="Off">
+    <App name="Fussbodenheizung" dns="fussbodenheizungbad" prio="6" supply="Battery" soc="30" mode="Auto">
       <Timer on="3:30" off="6:0"/>
     </App>
-    <App name="Bachlauf" dns="bachlauf" prio="5" supply="Surplus" mode="Auto"/>
+    <App name="Bachlauf" dns="teich" prio="5" supply="battery" soc="40" mode="Auto">
+       <Timer on="10:00" off="18:00"/>
+    </App>
   </Approvals>
 </Settings>

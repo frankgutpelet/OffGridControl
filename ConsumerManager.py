@@ -4,6 +4,7 @@ from IInverter import IInverter
 from mylogging import Logging
 from Settings import Settings
 from datetime import datetime
+from Daly import Daly
 
 class ConsumerManager(IConsumerManager):
     logger : Logging
@@ -13,8 +14,9 @@ class ConsumerManager(IConsumerManager):
     lastSwitchOn : int
     simMode : bool
     inverterData : dict
+    dalyBms : Daly
 
-    def __init__(self, inverter : IInverter, logging : Logging, settings : Settings, simMode = False):
+    def __init__(self, inverter : IInverter, logging : Logging, settings : Settings, daly : Daly, simMode = False):
         self.inverter = inverter
         self.logger = logging
         self.consumers = list()
@@ -22,6 +24,7 @@ class ConsumerManager(IConsumerManager):
         self.lastSwitchOn = 0
         self.simMode = simMode
         self.logger.Debug("start Consumer Manager")
+        self.dalyBms = daly
 
     def updateConsumerList(self, consumerList : list):                                                                  #update list of consumers (after configuration change)
         self.consumers.clear()
@@ -57,6 +60,11 @@ class ConsumerManager(IConsumerManager):
 
             if Settings.E_SUPPLY.UTILITY == consumer.supply:
                 if self.__switchOn(consumer):
+                    return
+                continue
+            if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState == Settings.E_SUPPLY.BATTERY \
+                and consumer.soc > self.dalyBms.getSOC():
+                if self.__switchOff(consumer):
                     return
                 continue
             if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState in [Settings.E_SUPPLY.SURPLUS,
@@ -105,16 +113,25 @@ class ConsumerManager(IConsumerManager):
 
     def __getInverterState(self, inverterData : list()):
         self.logger.Debug("Inverter: " + str(inverterData['chargingstate']))
+        soc = 0
+        if '' == self.dalyBms.getSOC():
+            self.dalyBms.read()
+        if '' != self.dalyBms.getSOC():
+            soc = int(self.dalyBms.getSOC())
+        self.logger.Debug("SOC: " + str(soc))
         if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and inverterData['chargingstate']  in ['Absorption', 'Float']:
             return Settings.E_SUPPLY.SURPLUS
         if Settings.E_SUPPLY.UTILITY == inverterData['supply']:
             return Settings.E_SUPPLY.UTILITY
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 2 > inverterData['batI']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 20 > int(self.dalyBms.getSOC()):
+            return Settings.E_SUPPLY.UTILITY
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 70 > int(self.dalyBms.getSOC()):
             return Settings.E_SUPPLY.BATTERY
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and self.settings.floatVoltage > inverterData['batV']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 90 > int(self.dalyBms.getSOC()):
             return Settings.E_SUPPLY.SOLAR
-        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and self.settings.floatVoltage <= inverterData['batV']:
+        if Settings.E_SUPPLY.SOLAR == inverterData['supply'] and 90 <= int(self.dalyBms.getSOC()):
             return Settings.E_SUPPLY.SURPLUS
+
 
         raise Exception("unknown Inverter State: " + str(inverterData))
 

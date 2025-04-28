@@ -36,6 +36,7 @@ class Settings:
         dns : str
         prio : int
         supply : str
+        soc : int
         mode : str
         timers : list
         minTimeRunningMinutes : int
@@ -46,6 +47,10 @@ class Settings:
             self.prio = int(config.attrib['prio'])
             self.supply = self._getByStr(config.attrib['supply'], Settings.E_SUPPLY.names)
             self.mode = self._getByStr(config.attrib['mode'], Settings.E_MODE.names)
+            if 'soc' in config.attrib:
+                self.soc = int(config.attrib['soc'])
+            else:
+                self.soc = 0
             if ('minTimeRunningMinutes' in config.attrib):
                 self.minTimeRunningMinutes = config.attrib['minTimeRunningMinutes']
             else:
@@ -64,6 +69,7 @@ class Settings:
             config.attrib['prio'] = str(self.prio)
             config.attrib['supply'] = self.supply
             config.attrib['mode'] = self.mode
+            config.attrib['soc'] = self.soc
             if self.minTimeRunningMinutes != 0:
                 config.attrib['minTimeRunningMinutes'] = str(self.minTimeRunningMinutes)
             for timer in self.timers:

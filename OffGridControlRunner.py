@@ -5,6 +5,7 @@ from ConsumerManager import ConsumerManager
 from IInverter import IInverter
 from Consumer import Consumer
 from IFrontend import IFrontend
+from Daly import Daly
 
 class OffGridControlRunner:
     settingsFile : str
@@ -15,13 +16,13 @@ class OffGridControlRunner:
     inverter: IInverter
     frontend : IFrontend
 
-    def __init__(self, settings : str, logger : Logging, inverter : IInverter, frontend : IFrontend, simMode = False):
+    def __init__(self, settings : str, logger : Logging, inverter : IInverter, frontend : IFrontend, daly : Daly, simMode = False):
         self.settingsFile =settings
         self.logger = logger
         self.settingsTimestamp = 0
         self.frontend = frontend
         self.inverter = inverter
-        self.manager = ConsumerManager(inverter, logger, Settings(self.settingsFile), simMode)
+        self.manager = ConsumerManager(inverter, logger, Settings(self.settingsFile), daly, simMode)
         self._checkSettings()
 
     def run(self):

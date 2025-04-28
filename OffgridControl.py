@@ -7,23 +7,41 @@ from Settings import Settings
 from Com import TTYWrapper
 from Frontend import Frontend
 from FifoWrapper import FifoWrapper
+from Daly import Daly
+import glob
+import os
 
 def main():
     comports = list()
     settings = Settings('Settings.xml')
     logger = Logging()
     logger.setLogLevel(settings.logging.loglevel, False)
-    victronCharger1 = TTYWrapper('/dev/ttyUSB0', 19200, logger)
-    victronCharger2 = TTYWrapper('/dev/ttyUSB1', 19200, logger)
+    ports = glob.glob('/dev/ttyUSB*')
+    dalyPort = 2
+    for i in ports:
+        tty = i
+        if not os.path.exists(tty):
+            logger.Error(tty + " not available")
+            continue
+        victronCharger = TTYWrapper(tty, 19200, logger)
+        victronCharger.connect()
+        line = str(victronCharger.readline())
+        if "b\'\'" != line:
+            logger.Debug("Found victron on Port ttyUSB" + str(i) + ": " + line)
+            comports.append(victronCharger)
+        else:
+            logger.Debug("Found Daly on port ttyUSB" + str(i))
+            dalyPort = i
+        victronCharger.disconnect()
+
+    dalyBms = Daly('/dev/ttyUSB' + str(dalyPort))
     fifo = FifoWrapper('/tmp/solarWatcher.fifo', logger)
-    frontend = Frontend(fifo, logger)
-    comports.append(victronCharger1)
-    comports.append(victronCharger2)
+    frontend = Frontend(fifo, logger, dalyBms)
     easun = EASun(logger)
 
     victron = VictronReader(logger, comports)
-    inverter = InverterAdapter(victron, easun)
-    runner = OffGridControlRunner('Settings.xml', logger, inverter, frontend)
+    inverter = InverterAdapter(victron, easun, dalyBms)
+    runner = OffGridControlRunner('Settings.xml', logger, inverter, frontend, dalyBms)
     runner.run()
 
 

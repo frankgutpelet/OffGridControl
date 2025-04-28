@@ -10,6 +10,7 @@ class EASun(IEASun):
     gpioPin = 4
 
     def __init__(self, logger):
+        return
         self.__solarSupply = False
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpioPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -18,15 +19,14 @@ class EASun(IEASun):
         self.ReadThread.start()
 
     def IsRunning(self):
+        return True
         if self.ReadThread.isAlive():
             return True
         else:
             return False
 
     def getMode(self):
-        if self.__solarSupply:
-            return "Solar"
-        return "Utility"
+        return "Solar"
 
 
     def __ReadThread(self):

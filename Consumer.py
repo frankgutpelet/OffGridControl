@@ -27,6 +27,7 @@ class Consumer(IConsumer):
     prio : int
     supply : str #Settings.E_SUPPLY
     mode : str # Settings.E_MODE
+    soc : int
     name : str
     __dns : str
     timeswitch : TimeSwitch
@@ -47,6 +48,7 @@ class Consumer(IConsumer):
         self.minTime = int(settings.minTimeRunningMinutes)
         self.requests = True
         self.prohibitCounter = 0
+        self.soc = settings.soc
 
         if  0 < len(settings.timers):
             self.timeswitch = TimeSwitch(settings.timers)

@@ -12,12 +12,12 @@ class Frontend(IFrontend):
 	_globalData : dict
 	__fifo : IFifo
 
-	def __init__(self, fifo, logger):
+	def __init__(self, fifo, logger, daly):
 		self.__logger = logger
 		self.__fifo = fifo
 		self._deviceList = dict()
 		self._globalData = dict()
-		self.bms = Daly()
+		self.bms = daly
 
 	def updateDevice(self, transferData : list):
 		self.__checkParam(transferData, self.transferDataDevice)

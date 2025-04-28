@@ -21,13 +21,13 @@ class TTYWrapper(ICom):
 
     def connect(self):
         try:
-            self.handle = Serial(self.com, self.baud)
+            self.handle = Serial(self.com, self.baud, timeout=5)
             if not self.handle:
                 raise Exception("connection to serial Port failed - no handle")
-        except:
-            self.logger.Error("No connection to serial port " + self.com)
+        except Exception as e:
+            self.logger.Error(f"No connection to serial port {self.com}: {e}")
             return None
-        self.logger.Debug("Connected to " + self.com + " with " + str(self.baud))
+        self.logger.Debug(f"Connected to {self.com} with {self.baud}")
         return self.handle
 
     def disconnect(self):
