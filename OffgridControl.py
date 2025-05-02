@@ -30,17 +30,17 @@ def main():
             logger.Debug("Found victron on Port ttyUSB" + str(i) + ": " + line)
             comports.append(victronCharger)
         else:
-            logger.Debug("Found Daly on port ttyUSB" + str(i))
             dalyPort = i
         victronCharger.disconnect()
 
-    dalyBms = Daly('/dev/ttyUSB' + str(dalyPort))
+    dalyBms = Daly(dalyPort, logger)
+    logger.Debug("Found Daly on port ttyUSB" + str(dalyPort))
     fifo = FifoWrapper('/tmp/solarWatcher.fifo', logger)
     frontend = Frontend(fifo, logger, dalyBms)
-    easun = EASun(logger)
+    #easun = EASun(logger) momentan nicht mehr möglich - wird über stromberechnung bestimmt.
 
     victron = VictronReader(logger, comports)
-    inverter = InverterAdapter(victron, easun, dalyBms)
+    inverter = InverterAdapter(victron, dalyBms)
     runner = OffGridControlRunner('Settings.xml', logger, inverter, frontend, dalyBms)
     runner.run()
 

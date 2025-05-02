@@ -349,7 +349,7 @@
         e.preventDefault();
         const mode = target.dataset.mode;
         const device = target.dataset.device;
-
+        console.log(`update Device ${device} Mode: ${mode}`);
         fetch('update_device/', {
             method: 'POST',
             headers: {

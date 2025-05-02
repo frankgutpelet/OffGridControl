@@ -17,6 +17,7 @@ def index(request):
         "</tr></tbody>"
     file = open("config.json", "r")
     config = json.load(file)
+    print("geöffnet")
     file.close()
 
     for value in values:

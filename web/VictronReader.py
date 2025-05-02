@@ -65,15 +65,20 @@ class VictronReader:
                 logging.error(traceback.format_exc())
                 continue
 
+    def toFloat(self, value, decimal):
+        if '' != value:
+            return str(round(float(value),decimal))
+        else:
+            return 0
     def _parseJson(self, data):
         try:
            #{"todayE": 501, "yesterdayE": 728, "batI": 54.6, "solV": 61.02, "batV": 27.975, "supply": "Solar","charchingstate": 4,
             values = json.loads(data)
-            self.batV = str(round(float(values['batV']),1))
-            self.batI = str(round(float(values['batI']),1))
-            self.solV = str(round(float(values['solV']),1))
-            self.sumI = str(round(float(values['sumI']),1))
-            self.soc =  str(round(float(values['soc']),0))
+            self.batV = self.toFloat(values['batV'],1)
+            self.batI = self.toFloat(values['batI'],1)
+            self.solV = self.toFloat(values['solV'],1)
+            self.sumI = self.toFloat(values['sumI'],1)
+            self.soc =  self.toFloat(values['soc'],0)
             self.supply = values['supply']
             self.temp = "0"
             self.today = float(values['todayE'])/100.0

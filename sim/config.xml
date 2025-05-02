@@ -7,8 +7,7 @@
             prio: 0 - 10
             supply: surplus|solar|bat|utility
         -->
-        <App name="E-Bike Ladestation" dns="solarfreigabe1" prio="5" supply="solar" mode="off" minTimeRunningMinutes="10">
-            <Timer on="0:00" off="0:00"/>
+        <App name="E-Bike Ladestation" dns="solarfreigabe1" prio="5" supply="surplus" mode="auto" >
         </App>
          <App name="Fußbodenheizung" dns="solarfreigabe2" prio="3" supply="surplus" mode="auto">
         </App>
@@ -16,5 +15,11 @@
         </App>
         <App name="Aquariumheizung DG" dns="solarfreigabe2" prio="1" supply="surplus" mode="auto">
         </App>
+         <App name="Poolfilter" dns="poolfilter" prio="0" supply="Battery" mode="auto">
+            <Timer on="0:00" off="10:59" supply="Solar"/>
+            <Timer on="11:00" off="11:25" supply="Battery"/>
+            <Timer on="11:26" off="23:59" supply="Solar"/>
+         </App>
+
     </Approvals>
 </Settings>

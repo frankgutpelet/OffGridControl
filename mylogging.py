@@ -23,7 +23,7 @@ class Logging:
 			if (len(self.logBuffer) >= 1):
 				self.__lock_logBuffer.acquire()
 				try:
-					logfile = open("log/solarstatus_" + datetime.datetime.today().strftime("%Y-%m-%d") + ".log", "a")
+					logfile = open("log/OffgridControl_" + datetime.datetime.today().strftime("%Y-%m-%d") + ".log", "a")
 					for entry in self.logBuffer:
 						logfile.write(entry)
 					logfile.close()

@@ -7,6 +7,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from TempReader import TempReader
 import requests
+import json
 
 victronReader = VictronReader.VictronReader.GetInstance()
 # Create your views here.
@@ -125,11 +126,6 @@ def update_device(request):
         device = data.get('device')
         ChangeSettings(device, mode)
 
-        # Hier kannst du die Logik für die Aktualisierung des Geräts einfügen
-        # Zum Beispiel könntest du die Daten in einer Datenbank speichern oder etwas anderes tun
-
-        # Beispiel: Ausgabe der aktuellen Daten
-        # Zum Beispiel aktualisieren wir eine fiktive Geräte-Liste
         result = {
             "status": "success",
             "message": f"Gerät {device} auf {mode} gesetzt"

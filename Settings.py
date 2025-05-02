@@ -69,7 +69,7 @@ class Settings:
             config.attrib['prio'] = str(self.prio)
             config.attrib['supply'] = self.supply
             config.attrib['mode'] = self.mode
-            config.attrib['soc'] = self.soc
+            config.attrib['soc'] = str(self.soc)
             if self.minTimeRunningMinutes != 0:
                 config.attrib['minTimeRunningMinutes'] = str(self.minTimeRunningMinutes)
             for timer in self.timers:
@@ -141,7 +141,6 @@ class Settings:
         Approvals = ET.SubElement(root, "Approvals")
         for app in self.approvals:
             app.addTag(Approvals)
-
         string = minidom.parseString(ET.tostring(root))
 
         output = open(self.filename, "w")

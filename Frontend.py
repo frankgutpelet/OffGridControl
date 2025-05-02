@@ -11,6 +11,7 @@ class Frontend(IFrontend):
 	_deviceList: dict
 	_globalData : dict
 	__fifo : IFifo
+	bms : Daly
 
 	def __init__(self, fifo, logger, daly):
 		self.__logger = logger
@@ -33,7 +34,8 @@ class Frontend(IFrontend):
 	def sendData(self):
 		data = self._globalData
 		self.bms.read()
-		data['batV'] = self.bms.getVoltage()
+		if ('0' != self.bms.getVoltage()):
+			data['batV'] = self.bms.getVoltage()
 		data['sumI'] = self.bms.getCurrent()
 		data['soc'] = self.bms.getSOC()
 		data['Devices'] = self._deviceList

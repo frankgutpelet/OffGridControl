@@ -49,6 +49,8 @@ class SettimgsTest(unittest.TestCase):
         configfile = "Settings.xml"
         timestamp = os.stat(configfile).st_mtime
         settings = Settings(configfile)
+        newApp = settings.approvals[0]
+        settings.updated = True
         settings.save()
         self.assertNotEqual(timestamp, os.stat(configfile).st_mtime)
 
