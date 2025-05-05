@@ -121,6 +121,7 @@ class VictronReader(IVictronReader):
             mod = values['mod']
             today += values['today']
             yesterday += values['yesterday']
+            self.logger.Debug("Current of " + com.com + ": " + str(cur))
 
         if 0 != batVDiv:
             batV = batV / batVDiv

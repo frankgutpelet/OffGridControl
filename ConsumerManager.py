@@ -90,13 +90,13 @@ class ConsumerManager(IConsumerManager):
             if Settings.E_SUPPLY.BATTERY == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
                                                                                   Settings.E_SUPPLY.SOLAR,
                                                                                   Settings.E_SUPPLY.BATTERY]:
-                self.logger.Debug("Sitch off " + consumer.name + " SupplyState: " + inverterState)
+                self.logger.Debug("Switch off " + consumer.name + " SupplyState: " + inverterState)
                 if self.__switchOff(consumer):
                     return
                 continue
             if Settings.E_SUPPLY.SOLAR == consumer.supply and inverterState not in [Settings.E_SUPPLY.SURPLUS,
                                                                                 Settings.E_SUPPLY.SOLAR]:
-                self.logger.Debug("Sitch off " + consumer.name + " SupplyState: " + inverterState)
+                self.logger.Debug("Switch off " + consumer.name + " SupplyState: " + inverterState)
                 if self.__switchOff(consumer):
                     return
                 continue

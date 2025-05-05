@@ -33,7 +33,6 @@ class Frontend(IFrontend):
 
 	def sendData(self):
 		data = self._globalData
-		self.bms.read()
 		if ('0' != self.bms.getVoltage()):
 			data['batV'] = self.bms.getVoltage()
 		data['sumI'] = self.bms.getCurrent()

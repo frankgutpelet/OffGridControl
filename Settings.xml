@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <Settings>
-  <InverterSettings minimumVoltage="24.5" floatVoltage="27.0" switchDelaySeconds="10"/>
+  <InverterSettings minimumVoltage="25.6" floatVoltage="27.0" switchDelaySeconds="10" minimumSOC="20"/>
   <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
   <Approvals>
     <App name="BettSabrina" dns="WasserbettSabrina" prio="1" supply="Surplus" mode="Auto" soc="0">
@@ -11,13 +11,13 @@
     </App>
     <App name="E-Bike Ladestation" dns="ebike" prio="3" supply="Surplus" mode="Auto" soc="30" minTimeRunningMinutes="10"/>
     <App name="Aquarium EG" dns="solarfreigabe11" prio="4" supply="Surplus" mode="Auto" soc="0"/>
-    <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Battery" mode="AUTO" soc="30">
+    <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Battery" mode="Auto" soc="30">
       <Timer on="10:31" off="18:1"/>
     </App>
     <App name="Fussbodenheizung" dns="fussbodenheizungbad" prio="6" supply="Battery" mode="Auto" soc="30">
       <Timer on="3:31" off="6:1"/>
     </App>
-    <App name="Bachlauf" dns="teich" prio="5" supply="Battery" mode="Auto" soc="40">
+    <App name="Bachlauf" dns="Kompost" prio="5" supply="Battery" mode="AUTO" soc="40">
       <Timer on="10:1" off="18:1"/>
     </App>
   </Approvals>

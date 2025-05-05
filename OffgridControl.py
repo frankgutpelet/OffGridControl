@@ -7,6 +7,7 @@ from Settings import Settings
 from Com import TTYWrapper
 from Frontend import Frontend
 from FifoWrapper import FifoWrapper
+from SupplySwitch import SupplySwitch
 from Daly import Daly
 import glob
 import os
@@ -33,14 +34,13 @@ def main():
             dalyPort = i
         victronCharger.disconnect()
 
-    dalyBms = Daly(dalyPort, logger)
+    dalyBms = Daly(TTYWrapper(dalyPort, 9600,logger), logger)
     logger.Debug("Found Daly on port ttyUSB" + str(dalyPort))
     fifo = FifoWrapper('/tmp/solarWatcher.fifo', logger)
     frontend = Frontend(fifo, logger, dalyBms)
-    #easun = EASun(logger) momentan nicht mehr möglich - wird über stromberechnung bestimmt.
-
+    supplySwitch = SupplySwitch(dalyBms, logger, settings)
     victron = VictronReader(logger, comports)
-    inverter = InverterAdapter(victron, dalyBms)
+    inverter = InverterAdapter(victron, dalyBms, supplySwitch)
     runner = OffGridControlRunner('Settings.xml', logger, inverter, frontend, dalyBms)
     runner.run()
 

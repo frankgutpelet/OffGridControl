@@ -12,12 +12,27 @@ class TTYWrapper(ICom):
         self.com = com
         self.baud = baud
         self.logger = logger
+        self.handle = None
 
     def flush(self):
+        if not self.handle:
+            return b''
         return self.handle.flush()
 
     def readline(self):
+        if not self.handle:
+            return b''
         return self.handle.readline()
+
+    def write(self, bytes):
+        if not self.handle:
+            return b''
+        self.handle.write(bytes)
+
+    def read(self, noBytes):
+        if not self.handle:
+            return b''
+        return self.handle.read(noBytes)
 
     def connect(self):
         try:

@@ -1,6 +1,7 @@
 from IInverter import IInverter
 from IVictronReader import IVictronReader
 from Daly import Daly
+from SupplySwitch import SupplySwitch
 
 class InverterAdapter(IInverter):
     __victron : IVictronReader
@@ -8,12 +9,14 @@ class InverterAdapter(IInverter):
     #__easun : IEASun
     __daly : Daly
     __easunStanbyCurrentAmpere = 1
+    __suplySwitch : SupplySwitch
 
-    def __init__(self, victron : IVictronReader, daly : Daly ):
+    def __init__(self, victron : IVictronReader, daly : Daly, switch : SupplySwitch ):
         self.__victron = victron
         self.__victronData = self._chargerData.remove('supply')
         #self.__easun = easun
         self.__daly = daly
+        self.__suplySwitch = switch
 
     def getChargerData(self):
         data = self.__victron.getValues()
@@ -23,9 +26,8 @@ class InverterAdapter(IInverter):
         return data
 
     def getSupply(self, solarCurrent):
-        batteryCurrent = float(self.__daly.getCurrent())
-        inverterCurrent = solarCurrent - batteryCurrent
-        if (inverterCurrent > self.__easunStanbyCurrentAmpere):
+        if "ON" == self.__suplySwitch.switchState:
             return "Solar"
-        return "Utility"
+        else:
+            return "Utility"
 
