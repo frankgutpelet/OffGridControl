@@ -46,6 +46,8 @@ class TTYWrapper(ICom):
         return self.handle
 
     def disconnect(self):
+        if not self.handle:
+            return
         return self.handle.close()
 
     def isOpen(self):

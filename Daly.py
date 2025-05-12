@@ -16,7 +16,7 @@ class Daly:
         self.connected = False
         self.logger = logger
         self.comport = tty
-
+        self.logger.Debug("connect to " + self.comport.com)
         if not self.comport.connect():
             self.logger.Error(traceback.format_exc())
             self.logger.Error("Daly - No connection to daly BMS")

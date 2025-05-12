@@ -12,14 +12,14 @@ class SupplySwitch:
     bms : Daly
     isOn : bool
     logger : Logging
-    channel = "POWER3"
+    channel = "POWER2"
     timer = 0
     minimumSOC : int
     minimumV : float
-    treshold = 0.2
-    switchOffDelaySec = 6
+    treshold = 0.3
+    switchOffDelaySec = 600
     kill = False
-    switchDNS = "sonoff4ch"
+    switchDNS = "192.168.178.25"
 
     def __init__(self, dalyBms, logging, settings : Settings):
         self.bms = dalyBms
@@ -47,9 +47,9 @@ class SupplySwitch:
                 self.bms.read()
                 soc = int(self.bms.getSOC())
                 voltage = float(self.bms.getVoltage())
-                if (self.minimumSOC > soc) or (self.minimumV >= voltage):
+                if (self.minimumSOC > soc): # or (self.minimumV >= voltage): momentan nicht nach spannung weil es schwankt, wenn abgeschaltet wird geladen => spannung steigt
                     self.isOn = False
-                elif(self.minimumSOC < soc) and (self.minimumV + self.treshold <= voltage):
+                elif(self.minimumSOC < soc): # and (self.minimumV + self.treshold <= voltage):
                     self.isOn = True
                 self.__switch()
                 self.timer += 1

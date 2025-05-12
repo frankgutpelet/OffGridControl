@@ -1,24 +1,25 @@
 <?xml version="1.0" ?>
 <Settings>
-  <InverterSettings minimumVoltage="25.6" floatVoltage="27.0" switchDelaySeconds="10" minimumSOC="20"/>
+  <InverterSettings minimumVoltage="25.6" floatVoltage="27.0" switchDelaySeconds="10" minimumSOC="21"/>
   <Logging loglevel="DEBUG" file="log/Offgrid-[date].log"/>
   <Approvals>
-    <App name="BettSabrina" dns="WasserbettSabrina" prio="1" supply="Surplus" mode="Auto" soc="0">
-      <Timer on="8:1" off="18:1"/>
+    <App name="BettSabrina" dns="WasserbettSabrina" prio="1" supply="Surplus" mode="AUTO" soc="0">
+      <Timer soc="0" on="08:00" off="18:00"/>
     </App>
     <App name="BettFrank" dns="WasserbettFrank" prio="2" supply="Surplus" mode="Auto" soc="0">
-      <Timer on="8:1" off="18:1"/>
+      <Timer soc="0" on="08:00" off="18:00"/>
     </App>
     <App name="E-Bike Ladestation" dns="ebike" prio="3" supply="Surplus" mode="Auto" soc="30" minTimeRunningMinutes="10"/>
     <App name="Aquarium EG" dns="solarfreigabe11" prio="4" supply="Surplus" mode="Auto" soc="0"/>
     <App name="Poolpumpe" dns="poolpumpe" prio="1" supply="Battery" mode="Auto" soc="30">
-      <Timer on="10:31" off="18:1"/>
+      <Timer soc="30" on="10:30" off="18:00"/>
     </App>
     <App name="Fussbodenheizung" dns="fussbodenheizungbad" prio="6" supply="Battery" mode="Auto" soc="30">
-      <Timer on="3:31" off="6:1"/>
+      <Timer soc="30" on="03:30" off="06:00"/>
+      <Timer soc="95" on="07:00" off="20:00"/>
     </App>
-    <App name="Bachlauf" dns="Kompost" prio="5" supply="Battery" mode="AUTO" soc="40">
-      <Timer on="10:1" off="18:1"/>
+    <App name="Bachlauf" dns="Teich" prio="5" supply="Battery" mode="Auto" soc="40">
+      <Timer soc="40" on="10:00" off="18:00"/>
     </App>
   </Approvals>
 </Settings>

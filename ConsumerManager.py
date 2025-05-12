@@ -153,7 +153,7 @@ class ConsumerManager(IConsumerManager):
         if consumer.isOn:
             return False
 
-        if consumer.approve():
+        if consumer.approve(self.dalyBms.getSOC()):
             self.logger.Debug("Approve consumer: " + consumer.name)
             consumer.push()                                                                                             #do only a push if a switch happend
             self.lastSwitchOn = datetime.now().timestamp()

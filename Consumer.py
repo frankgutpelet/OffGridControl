@@ -20,8 +20,8 @@ class TimeSwitch():
             timestamp = now.hour * 60 + now.minute
 
             if timestamp > onTime and timestamp < offTime:
-                return True
-        return False
+                return True, time.soc
+        return False, 0
 
 class Consumer(IConsumer):
     prio : int
@@ -60,19 +60,25 @@ class Consumer(IConsumer):
             self.isOn = True
 
 
-    def approve(self):
+    def approve(self, soc : int):
         self.prohibitCounter = 0
         if not 'Auto' == self.mode:
             return self.isOn
         if self.timeswitch:
-            self.isOn = self.timeswitch.isOn(datetime.now().time())
+            isOn, self.soc = self.timeswitch.isOn(datetime.now().time())
+            if self.soc <= soc:
+                self.isOn = isOn
+            else:
+                self.isOn = False
         else:
             if not self.isOn:
                 self.timestampOn = datetime.now().timestamp()
+                self.logger.Debug("change soc of " + self.name + " to " + str(self.soc) + "%")
             self.isOn = True
 
-        return self.isOn
-
+        if self.soc > soc:
+            return self.isOn
+        return False
 
     def prohibit(self, force : bool):
         self.prohibitCounter +=1

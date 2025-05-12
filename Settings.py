@@ -25,7 +25,9 @@ class Settings:
     class Timer:
         onTime : time
         offTime : time
-        def __init__(self, onTime : str, offTime : str):
+        soc : int
+        def __init__(self, onTime : str, offTime : str, soc : str):
+            self.soc = int(soc)
             self.onTime = time(int(onTime.split(':')[0]), int(onTime.split(':')[1]))
             self.offTime = time(int(offTime.split(':')[0]), int(offTime.split(':')[1]))
 
@@ -57,7 +59,7 @@ class Settings:
                 self.minTimeRunningMinutes = 0
             self.timers = list()
             for timerConfig in config.findall('Timer'):
-                self.timers.append(Settings.Timer(timerConfig.attrib['on'], timerConfig.attrib['off']))
+                self.timers.append(Settings.Timer(timerConfig.attrib['on'], timerConfig.attrib['off'], timerConfig.attrib['soc']))
 
         def Supply(self):
             return self.ENUM_SUPPLY[self.supply]
@@ -74,8 +76,9 @@ class Settings:
                 config.attrib['minTimeRunningMinutes'] = str(self.minTimeRunningMinutes)
             for timer in self.timers:
                 timElem = ET.Element("Timer")
-                timElem.attrib['on'] = str(timer.onTime.hour) + ":" +  str(timer.onTime.minute)
-                timElem.attrib['off'] = str(timer.offTime.hour) + ":" +  str(timer.offTime.minute)
+                timElem.attrib['soc'] = str(timer.soc)
+                timElem.attrib['on'] = f"{timer.onTime.hour:02}" + ":" +  f"{timer.onTime.minute:02}"
+                timElem.attrib['off'] = f"{timer.offTime.hour:02}" + ":" +  f"{timer.offTime.minute:02}"
                 config.append(timElem)
             return config
 
