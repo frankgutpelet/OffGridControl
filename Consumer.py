@@ -8,7 +8,7 @@ import requests
 class TimeSwitch():
     times : list
 
-    def __init__(self, times : list() ):
+    def __init__(self, times : list ):
         self.times = times
 
     def isOn(self, now : datetime.time):
@@ -33,7 +33,6 @@ class Consumer(IConsumer):
     timeswitch : TimeSwitch
     logger : Logging
     timestampOn : int
-    requests : bool
     prohibitCounter: int
     maxSoftProhibits = 5
 
@@ -46,7 +45,6 @@ class Consumer(IConsumer):
         self.logger = logger
         self.timestampOn = 0
         self.minTime = int(settings.minTimeRunningMinutes)
-        self.requests = True
         self.prohibitCounter = 0
         self.soc = settings.soc
 
@@ -61,24 +59,31 @@ class Consumer(IConsumer):
 
 
     def approve(self, soc : int):
+        oldState = self.isOn
+        oldSoc = self.soc
+
         self.prohibitCounter = 0
         if not 'Auto' == self.mode:
-            return self.isOn
+            return (self.isOn != oldState)
         if self.timeswitch:
-            isOn, self.soc = self.timeswitch.isOn(datetime.now().time())
-            if self.soc <= soc:
-                self.isOn = isOn
-            else:
-                self.isOn = False
+            self.isOn, self.soc = self.timeswitch.isOn(datetime.now().time())
         else:
-            if not self.isOn:
-                self.timestampOn = datetime.now().timestamp()
-                self.logger.Debug("change soc of " + self.name + " to " + str(self.soc) + "%")
             self.isOn = True
 
+        if oldSoc != self.soc:
+            self.logger.Debug("Change SOC of " + self.name + " by timeswitch from " + str(oldSoc) + "% to " + str(self.soc) + "%")
+
+        #ausschalten wenn min soc unterschritten
         if self.soc > soc:
-            return self.isOn
-        return False
+            self.isOn = False
+
+        if self.isOn and (oldState != self.isOn):
+            self.logger.Debug("Switch on " + self.name)
+
+        if not self.isOn and (oldState != self.isOn):
+            self.logger.Debug("Switch off " + self.name)
+
+        return (self.isOn != oldState)
 
     def prohibit(self, force : bool):
         self.prohibitCounter +=1
@@ -90,18 +95,17 @@ class Consumer(IConsumer):
         return ret
 
     def push(self):
+        response = None
         if self.isOn:
             cmd = "on"
         else:
             cmd = "off"
         try:
-            if self.requests:
-                response = None
-                self.logger.Debug("send command to " + self.__dns + ": " + cmd)
-                self.logger.Debug(self.__dns + "/cm?cmnd=Power%20" + cmd)
-                response = requests.get("http://" + self.__dns + "/cm?cmnd=Power%20" + cmd)
-                if 200 != response.status_code:
-                    raise Exception
+            self.logger.Debug("send command to " + self.__dns + ": " + cmd)
+            self.logger.Debug(self.__dns + "/cm?cmnd=Power%20" + cmd)
+            response = requests.get("http://" + self.__dns + "/cm?cmnd=Power%20" + cmd)
+            if 200 != response.status_code:
+                raise Exception
         except Exception:
             self.logger.Error("No connection to " + self.name + "(DNS: " + self.__dns + ")")
             if response:

@@ -11,6 +11,7 @@ from SupplySwitch import SupplySwitch
 from Daly import Daly
 import glob
 import os
+import gc
 
 def main():
     comports = list()
@@ -19,23 +20,33 @@ def main():
     logger.setLogLevel(settings.logging.loglevel, False)
     ports = glob.glob('/dev/ttyUSB*')
     dalyPort = 2
-    for i in ports:
+    dalyBms = None
+    for i in reversed(ports):
         tty = i
         if not os.path.exists(tty):
             logger.Error(tty + " not available")
             continue
         victronCharger = TTYWrapper(tty, 19200, logger)
-        victronCharger.connect()
+        try:
+            victronCharger.connect()
+        except:
+            logger.Error("Could not open " + i)
+            continue
         line = str(victronCharger.readline())
         if "b\'\'" != line:
             logger.Debug("Found victron on Port ttyUSB" + str(i) + ": " + line)
             comports.append(victronCharger)
-        else:
-            dalyPort = i
+        elif not dalyBms:
+
+            dalyBms = Daly(TTYWrapper(tty, 9600,logger), logger)
+            dalyBms.read()
+            if 0 == dalyBms.getVoltage():
+                dalyBms = None
+                gc.collect()
+            else:
+                logger.Debug("Found Daly BMS on port " + tty + " Voltage: " + str(dalyBms.getVoltage()) + "V")
         victronCharger.disconnect()
 
-    dalyBms = Daly(TTYWrapper(dalyPort, 9600,logger), logger)
-    logger.Debug("Found Daly on port ttyUSB" + str(dalyPort))
     fifo = FifoWrapper('/tmp/solarWatcher.fifo', logger)
     frontend = Frontend(fifo, logger, dalyBms)
     supplySwitch = SupplySwitch(dalyBms, logger, settings)

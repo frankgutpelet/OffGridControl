@@ -157,31 +157,37 @@ class VictronReader(IVictronReader):
                 continue
 
             if ('V' == pair[0]):
-                ret['batV'] = int(pair[1]) / 1000
+                ret['batV'] = self.__toInt(pair[1]) / 1000
                 if 0 < ret['batV']:
                     control += 'VB '
             elif ('VPV' == pair[0]):
-                ret['solV'] = int(pair[1]) / 1000
+                ret['solV'] = self.__toInt(pair[1]) / 1000
                 if 0 < ret['solV']:
                         control += 'VPV '
             elif ('I' == pair[0]):
-                ret['cur'] = int(pair[1]) / 1000
+                ret['cur'] = self.__toInt(pair[1]) / 1000
                 if  0 <= ret['cur']:
                     control += 'I '
             elif ('CS' == pair[0]):
-                ret['mod'] = int(pair[1])
+                ret['mod'] = self.__toInt(pair[1])
                 control += "CS "
             elif ('H20' == pair[0]):
-                ret['today'] = int(pair[1])
+                ret['today'] = self.__toInt(pair[1])
                 control += "H20 "
             elif ('H22' == pair[0]):
-                ret['yesterday'] = int(pair[1])
+                ret['yesterday'] = self.__toInt(pair[1])
                 control += "H22 "
             elif ('ERR' == pair[0]):
-                self.errorcode = int(pair[1])
+                self.errorcode = self.__toInt(pair[1])
                 if (VictronReader.Error.No_error != self.errorcode):
                     self.logger.Error(VictronReader.Error.getError(self.errorcode))
             if ('VB' in control and 'VPV' in control and 'I' in control and 'CS' in control and 'H20' in control and 'H22' in control):
                 return ret
 
         return None
+
+    def __toInt(self, text : str):
+        try:
+            return int(text)
+        except:
+            return 0

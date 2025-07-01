@@ -135,9 +135,17 @@ class ConsumerManager(IConsumerManager):
 
         raise Exception("unknown Inverter State: " + str(inverterData))
 
-
+    def __OverloadOccured(self):
+        inverterCurrent = float(self.dalyBms.getCurrent()) + float(self.inverter.getChargerData()['batI'])
+        inverterPower = inverterCurrent * float(self.dalyBms.getVoltage())
+        if self.settings.inverterMinimumPowerW < inverterPower:
+            self.logger.Debug("Inverter Overload")
+            return True
+        return False
     def __MinimumVoltageReached(self, inverterData):
-        if inverterData['batV'] < self.settings.inverterMinimumVoltage or Settings.E_SUPPLY.UTILITY == inverterData['supply']:
+        if inverterData['batV'] < self.settings.inverterMinimumVoltage or \
+                Settings.E_SUPPLY.UTILITY == inverterData['supply'] or \
+                self.__OverloadOccured():
             for consumer in self.consumers:
                 if consumer.prohibit(True):
                     self.logger.Debug("Minimum Voltage reached: switch off " + consumer.name)
@@ -148,9 +156,6 @@ class ConsumerManager(IConsumerManager):
         now = datetime.now().timestamp()
 
         if (0 != self.lastSwitchOn) and (self.settings.switchDelaySeconds > (now - self.lastSwitchOn)):                 # do not switch if the last switch was not long enough ago
-            return False
-
-        if consumer.isOn:
             return False
 
         if consumer.approve(self.dalyBms.getSOC()):

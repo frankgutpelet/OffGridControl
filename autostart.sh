@@ -1,5 +1,5 @@
 cd /home/frank/projects/OffGridControl
 su -c "./startService.sh" frank
-sleep 120
 cd web 
+sleep 30
 su -c "./startService.sh" frank

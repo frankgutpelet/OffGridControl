@@ -14,7 +14,7 @@ class LoggerStub:
 logger = LoggerStub()
 
 
-com = TTYWrapper('/dev/ttyUSB2', 9600, logger)
+com = TTYWrapper('/dev/ttyUSB3', 9600, logger)
 while(True):
 	daly = Daly.Daly(com, logger)
 	daly.read()

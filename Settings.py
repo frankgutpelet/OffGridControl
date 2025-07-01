@@ -102,6 +102,7 @@ class Settings:
     updated = False
     inverterMinimumVoltage : float
     minimumSoc : int
+    inverterMinimumPowerW : int
 
     def __init__(self, settingsfile : str):
         self.approvals = list()
@@ -113,6 +114,7 @@ class Settings:
         self.logging = self.Logging(tagLogging.attrib['loglevel'], tagLogging.attrib['file'])
         self.inverterMinimumVoltage = float(root.find("InverterSettings").attrib['minimumVoltage'])
         self.minimumSoc = int(root.find("InverterSettings").attrib['minimumSOC'])
+        self.inverterMinimumPowerW = int(root.find("InverterSettings").attrib['inverterMinimumPowerW'])
         self.switchDelaySeconds = int(root.find("InverterSettings").attrib['switchDelaySeconds'])
         self.floatVoltage = float(root.find("InverterSettings").attrib['floatVoltage'])
 
@@ -142,6 +144,7 @@ class Settings:
         InverterSettings.attrib["floatVoltage"] = str(self.floatVoltage)
         InverterSettings.attrib["switchDelaySeconds"] = str(self.switchDelaySeconds)
         InverterSettings.attrib["minimumSOC"] = str(self.minimumSoc)
+        InverterSettings.attrib["inverterMinimumPowerW"] = str(self.inverterMinimumPowerW)
         Logging = ET.SubElement(root, "Logging")
         Logging.attrib["loglevel"] = self.logging.loglevel
         Logging.attrib["file"] = self.logging.logFile
