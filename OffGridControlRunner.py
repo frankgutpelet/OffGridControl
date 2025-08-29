@@ -43,11 +43,9 @@ class OffGridControlRunner:
                 self.manager.settings = self.settings
                 break
         self.manager.manageApprovals()
+        #todo hier passiert die exception
         self.manager.push()
         self.__updateFrontend()
-
-
-
 
 
     def __updateFrontend(self):

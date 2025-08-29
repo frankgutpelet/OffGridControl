@@ -36,6 +36,7 @@ class Frontend(IFrontend):
 		if ('0' != self.bms.getVoltage()):
 			data['batV'] = self.bms.getVoltage()
 		data['sumI'] = self.bms.getCurrent()
+		self.__logger.Debug("SumI: " + str(data['sumI']))
 		data['soc'] = self.bms.getSOC()
 		data['Devices'] = self._deviceList
 		try:

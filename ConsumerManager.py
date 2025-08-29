@@ -136,10 +136,10 @@ class ConsumerManager(IConsumerManager):
         raise Exception("unknown Inverter State: " + str(inverterData))
 
     def __OverloadOccured(self):
-        inverterCurrent = float(self.dalyBms.getCurrent()) + float(self.inverter.getChargerData()['batI'])
+        inverterCurrent = float(self.dalyBms.getCurrent()) - float(self.inverter.getChargerData()['batI'])
         inverterPower = inverterCurrent * float(self.dalyBms.getVoltage())
         if self.settings.inverterMinimumPowerW < inverterPower:
-            self.logger.Debug("Inverter Overload")
+            self.logger.Debug("Inverter Overload: " + str(inverterPower) + "charger: " + str(self.inverter.getChargerData()['batI']) + "battery: " + str(self.dalyBms.getCurrent()))
             return True
         return False
     def __MinimumVoltageReached(self, inverterData):

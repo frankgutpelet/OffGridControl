@@ -1,6 +1,7 @@
 from ICom import ICom
 from serial import Serial
 from mylogging import Logging
+import time
 
 class TTYWrapper(ICom):
     com : str
@@ -35,15 +36,21 @@ class TTYWrapper(ICom):
         return self.handle.read(noBytes)
 
     def connect(self):
-        try:
-            self.handle = Serial(self.com, self.baud, timeout=5)
-            if not self.handle:
-                raise Exception("connection to serial Port failed - no handle")
-        except Exception as e:
-            self.logger.Error(f"No connection to serial port {self.com}: {e}")
-            return None
-        self.logger.Debug(f"Connected to {self.com} with {self.baud}")
-        return self.handle
+        errorcnt = 0
+        while True:
+            if 2 == errorcnt:
+                return False
+            try:
+                self.handle = Serial(self.com, self.baud, timeout=5)
+                if not self.handle:
+                    raise Exception("connection to serial Port failed - no handle")
+            except Exception as e:
+                self.logger.Error(f"No connection to serial port {self.com}: {e}")
+                time.sleep(2)
+                errorcnt += 1
+                continue
+            self.logger.Debug(f"Connected to {self.com} with {self.baud}")
+            return True
 
     def disconnect(self):
         if not self.handle:

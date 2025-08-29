@@ -86,9 +86,16 @@ class VictronReader(IVictronReader):
     def __init__(self, logger : Logging, comports: list):
         self.logger = logger
         self.coms = comports
+        releasePorts = list()
 
         for comport in comports:
-            comport.connect()
+            try:
+                comport.connect()
+            except:
+                releasePorts.append(comport)
+        for release in releasePorts:
+            self.coms.remove(release)
+            Logging.Error("Released port " + release.com)
 
 
     def getValues(self):
@@ -135,7 +142,11 @@ class VictronReader(IVictronReader):
 
         text = ""
         ret = {'batV': 0, 'solV': 0, 'cur': 0, 'mod': 'unknown', 'today': 0, 'yesterday': 0}
-        com.flush()
+        try:
+            com.flush()
+        except:
+            self.logger.Error("VictronReader not connected to port " + com.com)
+            return
         control = ""
 
         for i in range(1, 20):

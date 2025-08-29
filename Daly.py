@@ -2,6 +2,8 @@ import logging
 import traceback
 from Com import TTYWrapper
 import struct
+import glob, gc
+import time
 
 class Daly:
     soc = {
@@ -19,10 +21,44 @@ class Daly:
         self.logger.Debug("connect to " + self.comport.com)
         if not self.comport.connect():
             self.logger.Error(traceback.format_exc())
-            self.logger.Error("Daly - No connection to daly BMS")
+            self.logger.Error("Daly - No connection to daly BMS on " + tty)
+            self.comport = None
+
+    def __reconnect(self):
+        ports = glob.glob('/dev/ttyUSB*')
+        for port in ports:
+            try:
+                self.logger.Debug("Try to connect to " + port)
+                with open(port, 'rb+', buffering=0) as tty:
+                    self.logger.Debug(port + "is not in use")
+                    tty.close()
+                    self.comport = TTYWrapper(tty, 9600, self.logger)
+                    if not self.comport.connect():
+                        self.logger.Error("Daly - No connection to daly BMS on " + tty)
+                        self.comport = None
+                        gc.collect()
+                        continue
+                    self.comport.write(self._format_message(90))
+                    self.__read()
+                    if 0 == self.getVoltage():
+                        gc.collect()
+                        continue
+                    else:
+                        self.logger.Debug("Found Daly BMS on port " + tty + " Voltage: " + str(self.getVoltage()) + "V")
+            except:
+                self.logger.Debug(port + "is in use")
+                continue
 
     def read(self):
-        self.comport.write(self._format_message(90))
+        try:
+            self.comport.write(self._format_message(90))
+            return self.__read()
+        except:
+            self.__reconnect()
+            self.comport.write(self._format_message(90))
+            return self.__read()
+
+    def __read(self):
         response = self.comport.read(13)
         if len(response) == 13 and response[0] == 0xA5 and response[2] == 0x90:
             parts = struct.unpack('>h h h h', response[4:-1])
